@@ -5,11 +5,11 @@ import com.example.hotelapp.Entity.User.User;
 
 public interface UserService {
     //Create
-    User createUser(UserDto userDto);
+    User createUser(User user);
     //Update
     User updateUser(String username,UserDto userDto);
     //Delete
-    void deleteUser(String username);
+    void deleteUser(Long id);
     //Read
     User getUsername(String username);
 }
