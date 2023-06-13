@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
+
 @Controller
 public class controller {
     UserService userService;
@@ -45,6 +47,16 @@ public class controller {
             return "signup";
         }
         userService.createUser(userDto);
-        return "redirect:/register?success";
+        return "redirect:/signup?success";
+    }
+    @GetMapping("/users")
+    public String listUsers(Model model){
+        List<UserDto> users = userService.findAllUsers();
+        model.addAttribute("users", users);
+        return "users";
+    }
+    @GetMapping("/login")
+    public String login(){
+        return "login";
     }
 }
