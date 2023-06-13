@@ -23,7 +23,7 @@ public class springSecurity {
     public PasswordEncoder encode(){
         return new BCryptPasswordEncoder();
     }
-    @Bean
+  /*  @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         return http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -41,5 +41,5 @@ public class springSecurity {
     public void configureGlobal(AuthenticationManagerBuilder auth2) throws Exception{
         auth2.userDetailsService(userDetailsService)
                 .passwordEncoder(encode());
-    }
+    }*/
 }
