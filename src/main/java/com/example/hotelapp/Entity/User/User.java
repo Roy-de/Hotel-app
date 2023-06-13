@@ -1,29 +1,21 @@
 package com.example.hotelapp.Entity.User;
 
+import com.example.hotelapp.Entity.Roles.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
+@Table(name="user_details")
 @Getter
 @Setter
-@NoArgsConstructor
-@Table(name="user_details")
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private int id;
-    @Column(name = "username")
-    private String username;
-    @Column(name = "name")
-    private String name;
-    @Column(name = "password")
-    private String password;
-    @Column(name = "email")
-    private String email;
+    public User() {
+    }
 
     public User(String username, String name, String password, String email) {
         this.username = username;
@@ -31,4 +23,27 @@ public class User {
         this.password = password;
         this.email = email;
     }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
+    @Column(name = "username",nullable = false)
+    @Size(max = 20)
+    private String username;
+    @Column(name = "name",nullable = false)
+    @Size(max = 20)
+    private String name;
+    @Size(max = 20)
+    @Column(name = "password",nullable = false)
+    @Size(max = 20)
+    private String password;
+    @Size(max = 20)
+    @Column(name = "email",nullable = false)
+    private String email;
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @JoinTable(
+            name ="user_roles" ,joinColumns = {@JoinColumn(name = "user_id",referencedColumnName = "ID")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id",referencedColumnName = "id")})
+    private List<Role> roles = new ArrayList<>();
 }

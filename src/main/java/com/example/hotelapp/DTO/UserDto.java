@@ -10,8 +10,8 @@ import javax.validation.constraints.NotEmpty;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserDto {
     @NotEmpty(message = "Username should not be empty")
     private String username;
