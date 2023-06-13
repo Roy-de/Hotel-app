@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -72,12 +73,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findUserByEmail(String email) {
-        return null;
+        return userRepository.findUserByEmail(email);
     }
 
     @Override
     public List<UserDto> findAllUsers() {
-        return null;
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(this::mapUsertoDto).collect(Collectors.toList());
+    }
+
+    private UserDto mapUsertoDto(User user) {
+        UserDto userDto = new UserDto();
+        userDto.setUsername(user.getUsername());
+        userDto.setEmail(user.getEmail());
+        userDto.setName(user.getName());
+        return userDto;
     }
 
 }
