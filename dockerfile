@@ -1,4 +1,4 @@
-FROM openjdk:latest
+FROM openjdk:20
 WORKDIR /app
 COPY ./target/Hotel-app-0.0.1-SNAPSHOT.jar /app/Hotel-app-0.0.1-SNAPSHOT.jar
 EXPOSE 8082
