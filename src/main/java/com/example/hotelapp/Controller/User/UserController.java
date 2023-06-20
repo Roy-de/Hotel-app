@@ -1,32 +1,36 @@
 package com.example.hotelapp.Controller.User;
 
 import com.example.hotelapp.DTO.UserDto;
-import com.example.hotelapp.Entity.User.User;
-import com.example.hotelapp.Service.UserService;
-import jakarta.validation.Valid;
+import com.example.hotelapp.Service.UserService.UserJDBCService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/user")
 public class UserController {
-    private final UserService userService;
+    private final UserJDBCService userJDBCService;
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(UserJDBCService userJDBCService) {
+        this.userJDBCService = userJDBCService;
     }
+    //Post mapping to post user details when creating an account
+    @PostMapping("/create")
+    public ResponseEntity<String> create_user(@RequestBody @Validated UserDto user){
+        try{
+            userJDBCService.create_user(user);
+            ResponseEntity.status(HttpStatus.CREATED).body("Account created");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Could not create account");
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body("Account created");
+    }
+    @GetMapping("/{credentials}")
+    public UserDto get_user_credentials(@PathVariable String credentials){
 
-    @PostMapping("/createuser")
-    public ResponseEntity<?> createUser(@RequestBody UserDto userDto){
-        User createdUser = userService.createUser(userDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+        return userJDBCService.get_user_credentials(credentials);
     }
 
 }

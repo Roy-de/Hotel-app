@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -20,6 +21,7 @@ public class UserDto {
     @Email
     @NotEmpty(message = "Fill in email")
     private String email;
-    @NotEmpty
+    @NotEmpty(message = "password must be filled")
+    @Size(min = 8,message = "Password should be of 8 characters")
     private String password;
 }
