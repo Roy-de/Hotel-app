@@ -1,5 +1,6 @@
 package com.example.hotelapp.Repository.impl;
 
+import com.example.hotelapp.DTO.UserCredentials;
 import com.example.hotelapp.DTO.UserDto;
 import com.example.hotelapp.Mappers.userRowMapper;
 import com.example.hotelapp.Repository.UserRepository;
@@ -27,8 +28,8 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public UserDto get_user_credentials(String credentials) {
-        String sql = "SELECT * FROM public.get_user_credentials(?)";
+    public UserCredentials get_user_credentials(String credentials) {
+        String sql = "SELECT user_email,user_password,user_username FROM public.get_user_credentials(?)";
         return jdbcTemplate.queryForObject(sql,new Object[]{credentials}, new userRowMapper());
 
     }

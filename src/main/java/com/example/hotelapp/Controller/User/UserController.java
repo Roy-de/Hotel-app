@@ -1,5 +1,6 @@
 package com.example.hotelapp.Controller.User;
 
+import com.example.hotelapp.DTO.UserCredentials;
 import com.example.hotelapp.DTO.UserDto;
 import com.example.hotelapp.Service.UserService.UserServiceLayer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Account created");
     }
     @GetMapping("/{credentials}")
-    public UserDto get_user_credentials(@PathVariable String credentials){
+    public UserCredentials get_user_credentials(@PathVariable String credentials){
 
         return userServiceLayer.get_user_credentials(credentials);
     }

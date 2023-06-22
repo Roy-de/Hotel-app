@@ -1,5 +1,6 @@
 package com.example.hotelapp.Service.UserService;
 
+import com.example.hotelapp.DTO.UserCredentials;
 import com.example.hotelapp.DTO.UserDto;
 import com.example.hotelapp.Repository.impl.UserRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class UserServiceLayer {
     public void create_user_account(UserDto userDto){
         userRepository.create_user_account(userDto);
     }
-    public UserDto get_user_credentials(String credentials){
+    public UserCredentials get_user_credentials(String credentials){
        return userRepository.get_user_credentials(credentials);
     }
 }

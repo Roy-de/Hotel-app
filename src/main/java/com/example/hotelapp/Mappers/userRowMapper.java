@@ -1,18 +1,18 @@
 package com.example.hotelapp.Mappers;
 
-import com.example.hotelapp.DTO.UserDto;
+import com.example.hotelapp.DTO.UserCredentials;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class userRowMapper implements RowMapper<UserDto> {
+public class userRowMapper implements RowMapper<UserCredentials> {
     @Override
-    public UserDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-        UserDto user = new UserDto();
-        user.setUsername(rs.getString("user_username"));
-        user.setEmail(rs.getString("user_email"));
-        user.setPassword(rs.getString("user_password"));
+    public UserCredentials mapRow(ResultSet rs, int rowNum) throws SQLException {
+        UserCredentials user = new UserCredentials();
+        user.setUser_username(rs.getString("user_username"));
+        user.setUser_email(rs.getString("user_email"));
+        user.setUser_password(rs.getString("user_password"));
         return user;
     }
 }
