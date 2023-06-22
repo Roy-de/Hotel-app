@@ -1,8 +1,12 @@
-com/example/hotelapp/Service/UserService/UserJDBCService.class
 com/example/hotelapp/Mappers/userDetailsMapper.class
+com/example/hotelapp/Service/UserService/UserServiceLayer.class
+com/example/hotelapp/Repository/UserRepository.class
 com/example/hotelapp/Controller/Admin/Admin_Controller.class
 com/example/hotelapp/DTO/UserDto.class
+com/example/hotelapp/Security/SecurityConfig.class
 com/example/hotelapp/Mappers/userRowMapper.class
 com/example/hotelapp/Controller/MainController/hotel_controller.class
+com/example/hotelapp/DTO/UserCredentials.class
 com/example/hotelapp/HotelAppApplication.class
 com/example/hotelapp/Controller/User/UserController.class
+com/example/hotelapp/Repository/impl/UserRepositoryImpl.class
