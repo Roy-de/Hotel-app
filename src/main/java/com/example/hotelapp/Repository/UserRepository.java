@@ -1,5 +1,6 @@
 package com.example.hotelapp.Repository;
 
+import com.example.hotelapp.DTO.ChangedPassword;
 import com.example.hotelapp.DTO.User.*;
 import com.example.hotelapp.ExceptionHandlers.Exception.UserNotFoundException;
 import org.springframework.stereotype.Repository;
@@ -20,7 +21,7 @@ public interface UserRepository {
     the where clause
      */
     UserUpdatedDto update_user(UserDetailsDto userDetailsDto);
-    UserChangedPassword change_password(UserDetailsDto userDetailsDto);
+    ChangedPassword change_password(UserDetailsDto userDetailsDto);
     /*
     The final method is the user should be able to delete his/ her account
      */

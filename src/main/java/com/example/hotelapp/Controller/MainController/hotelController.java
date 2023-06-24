@@ -1,9 +1,10 @@
-package com.example.hotelapp.Controller.Admin;
+package com.example.hotelapp.Controller.MainController;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/admin")
-public class Admin_Controller {
+@RequestMapping("/")
+public class hotelController {
+
 }

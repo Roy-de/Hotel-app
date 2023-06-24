@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class AdminRepositoryImpl implements AdminRepository {
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final JdbcTemplate jdbcTemplate;
 
     public AdminRepositoryImpl(JdbcTemplate jdbcTemplate) {

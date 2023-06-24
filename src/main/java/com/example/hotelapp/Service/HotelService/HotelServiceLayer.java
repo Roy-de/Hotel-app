@@ -1,5 +1,8 @@
 package com.example.hotelapp.Service.HotelService;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class HotelServiceLayer {
     /*--------HOW IT SHOULD WORK----------
     1.Get hotel details based on the admin account

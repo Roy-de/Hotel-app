@@ -1,6 +1,6 @@
 package com.example.hotelapp.Repository.impl;
 
-import com.example.hotelapp.Config.PasswordChecker;
+import com.example.hotelapp.DTO.ChangedPassword;
 import com.example.hotelapp.DTO.User.*;
 import com.example.hotelapp.Mappers.userRowMapper;
 import com.example.hotelapp.Repository.UserRepository;
@@ -9,14 +9,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
-import java.util.Objects;
-
 @Repository
-public class UserRepositoryImpl implements UserRepository, PasswordChecker {
+public class UserRepositoryImpl implements UserRepository{
     private UserCredentials userCredentials;
     private UserDetailsDto userDetailsDto;
     private UserUpdatedDto userUpdatedDto;
-    private UserChangedPassword userChangedPassword;
+    private ChangedPassword changedPassword;
     private final JdbcTemplate jdbcTemplate;
     private final PasswordEncoder passwordEncoder =  new BCryptPasswordEncoder();
 
@@ -47,26 +45,12 @@ public class UserRepositoryImpl implements UserRepository, PasswordChecker {
     }
 
     @Override
-    public UserChangedPassword change_password(UserDetailsDto userDetailsDto) {
+    public ChangedPassword change_password(UserDetailsDto userDetailsDto) {
         return null;
     }
 
     @Override
     public void delete_user(UserDto userDto) {
 
-    }
-
-    @Override
-    public void check_password() {
-        if(Objects.equals(userCredentials.getUser_password(), userChangedPassword.getOld_password())){
-            if(Objects.equals(userCredentials.getUser_password(),userChangedPassword.getNew_password())){
-                String message = "password identical";
-            }
-            else{
-                userCredentials.setUser_password(passwordEncoder.encode(userChangedPassword.getNew_password()));
-            }
-        }else{
-            String message = "Old password is incorrect";
-        }
     }
 }
