@@ -1,5 +1,6 @@
-package com.example.hotelapp.DTO;
+package com.example.hotelapp.DTO.User;
 
+import com.example.hotelapp.Mappers.userRowMapper;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

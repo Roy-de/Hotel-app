@@ -1,6 +1,6 @@
 package com.example.hotelapp.Mappers;
 
-import com.example.hotelapp.DTO.UserCredentials;
+import com.example.hotelapp.DTO.User.UserCredentials;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

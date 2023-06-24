@@ -1,8 +1,10 @@
 package com.example.hotelapp.Service.UserService;
 
-import com.example.hotelapp.DTO.UserCredentials;
-import com.example.hotelapp.DTO.UserDto;
+import com.example.hotelapp.DTO.User.*;
+import com.example.hotelapp.ExceptionHandlers.Exception.UserNotFoundException;
 import com.example.hotelapp.Repository.impl.UserRepositoryImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +27,7 @@ public class UserServiceLayer {
     public void create_user_account(UserDto userDto){
         userRepository.create_user_account(userDto);
     }
-    public UserCredentials get_user_credentials(String credentials){
+    public UserCredentials get_user_credentials(String credentials) throws UserNotFoundException {
        return userRepository.get_user_credentials(credentials);
     }
 }

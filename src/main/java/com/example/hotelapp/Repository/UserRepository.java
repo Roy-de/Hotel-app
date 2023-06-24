@@ -1,15 +1,30 @@
 package com.example.hotelapp.Repository;
 
-import com.example.hotelapp.DTO.UserCredentials;
-import com.example.hotelapp.DTO.UserDto;
-import com.example.hotelapp.Mappers.userRowMapper;
-import org.springframework.data.jdbc.repository.query.Query;
+import com.example.hotelapp.DTO.User.*;
+import com.example.hotelapp.ExceptionHandlers.Exception.UserNotFoundException;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository {
-    @Query(value = "CALL public.insert_user_record(?,?,?,?)")
+    //Method to create a user account
     void create_user_account(UserDto userDto);
-    @Query(value = "SELECT * FROM public.get_user_credentials(?)",rowMapperClass = userRowMapper.class)
-    UserCredentials get_user_credentials(String credentials);
+    //Method to get user credentials.User should not see this
+    UserCredentials get_user_credentials(String credentials) throws UserNotFoundException;
+    /*Method to update user details
+     The user should be able to change password and other details
+    *---------------HOW IT WORKS------------------
+    1. Get user details and store them in the User details dto
+    2. get new user details from the put method and store them in the UserUpdatedDto
+    3. For password, check if the new password is the same as the old password
+    4. Update the details of the user. Do this by updating user record and use the email in
+    the where clause
+     */
+    UserUpdatedDto update_user(UserDetailsDto userDetailsDto);
+    UserChangedPassword change_password(UserDetailsDto userDetailsDto);
+    /*
+    The final method is the user should be able to delete his/ her account
+     */
+    //Delete user account
+    void delete_user(UserDto userDto);
+
 }

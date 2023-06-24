@@ -1,4 +1,4 @@
-package com.example.hotelapp.DTO;
+package com.example.hotelapp.DTO.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
