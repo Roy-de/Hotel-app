@@ -1,7 +1,7 @@
 package com.example.hotelapp.Controller.MainController;
 
 import com.example.hotelapp.DTO.Hotel.HotelDto;
-import com.example.hotelapp.Repository.impl.HotelRepositoryImpl;
+import com.example.hotelapp.Service.HotelService.HotelServiceLayer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,14 +14,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/")
 public class hotelController {
-    private final HotelRepositoryImpl hotelRepository;
+    private final HotelServiceLayer hotelServiceLayer;
 
-    public hotelController(HotelRepositoryImpl hotelRepository) {
-        this.hotelRepository = hotelRepository;
+    public hotelController(HotelServiceLayer hotelServiceLayer) {
+        this.hotelServiceLayer = hotelServiceLayer;
     }
 
     @GetMapping("/list_hotel/{location}")
     public ResponseEntity<List<HotelDto>> list_hotels(@PathVariable String location){
-        return ResponseEntity.status(HttpStatus.OK).body(hotelRepository.list_all_hotels(location));
+        return ResponseEntity.status(HttpStatus.OK).body(hotelServiceLayer.list_all_hotels(location));
     }
 }

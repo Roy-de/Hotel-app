@@ -49,8 +49,8 @@ public class AdminRepositoryImpl implements AdminRepository {
         paramMap.put("alt_admin_email",adminDetailsDto.getAlt_email());
         //--------------------------------------------------------
         paramMap.put("hotel_name",hotelDto.getName());
-        paramMap.put("hotel_location",hotelDto.getLocation());
-        paramMap.put("hotel_place",hotelDto.getPlace());
+        paramMap.put("hotel_location",hotelDto.getLocation().toLowerCase());
+        paramMap.put("hotel_place",hotelDto.getPlace().toLowerCase());
         paramMap.put("hotel_description",hotelDto.getDescription());
         paramMap.put("hotel_pricing",hotelDto.getPricing());
         paramMap.put("hotel_no_of_beds",hotelDto.getNo_of_beds());
