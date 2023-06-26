@@ -1,4 +1,3 @@
-com/example/hotelapp/Mappers/userDetailsMapper.class
 com/example/hotelapp/Service/UserService/UserServiceLayer.class
 com/example/hotelapp/Repository/UserRepository.class
 com/example/hotelapp/Controller/Admin/Admin_Controller.class

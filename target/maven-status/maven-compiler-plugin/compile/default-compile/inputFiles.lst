@@ -4,7 +4,6 @@
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Controller/Admin/Admin_Controller.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Security/SecurityConfig.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/HotelAppApplication.java
-/home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Mappers/userDetailsMapper.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Service/UserService/UserServiceLayer.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/DTO/UserDto.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Repository/UserRepository.java
