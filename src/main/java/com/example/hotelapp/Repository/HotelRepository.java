@@ -11,7 +11,7 @@ import java.util.List;
 public interface HotelRepository {
     //---------CREATE HOTEL---------------
     //Create hotel
-    void create_hotel(HotelDto hotelDto, HotelImagesDto hotelImagesDto, HotelServicesDto hotelServicesDto);
+    void create_hotel(HotelDto hotelDto);
     /*
     ---------------- EDIT HOTEL -----------
      */

@@ -17,10 +17,12 @@ public class HotelDto {
     private String location;
     private int rating;
     private String description;
-    private int pricing;
+    private double pricing;
     private int no_of_beds;
     private boolean wifi;
     private int bathrooms;
     private int rooms_available;
-    private String place;
+    private double longitude;
+    private double latitude;
+
 }

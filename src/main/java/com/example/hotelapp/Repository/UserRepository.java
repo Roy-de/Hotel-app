@@ -20,7 +20,7 @@ public interface UserRepository {
     4. Update the details of the user. Do this by updating user record and use the email in
     the where clause
      */
-    UserUpdatedDto update_user(UserDetailsDto userDetailsDto);
+    int update_user(UserUpdatedDto userUpdatedDto,String credentials);
     ChangedPassword change_password(UserDetailsDto userDetailsDto);
     /*
     The final method is the user should be able to delete his/ her account

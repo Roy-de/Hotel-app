@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public class HotelRepositoryImpl implements HotelRepository {
     @Override
-    public void create_hotel(HotelDto hotelDto, HotelImagesDto hotelImagesDto, HotelServicesDto hotelServicesDto) {
+    public void create_hotel(HotelDto hotelDto) {
 
     }
 
@@ -32,6 +32,12 @@ public class HotelRepositoryImpl implements HotelRepository {
 
     @Override
     public List<HotelDto> list_all_hotels(HotelDto hotelDto, HotelImagesDto hotelImagesDto) {
+        String sql = "DO $$ " +
+                "DECLARE " +
+                "    result refcursor = 'generated_result_cursor'; " +
+                "BEGIN " +
+                "    OPEN result FOR SELECT * FROM public.get_hotels_by_location(in_location := ?); " +
+                "END $$";
         return null;
     }
 

@@ -10,5 +10,5 @@ public class PasswordService {
         this.changePasswordService = changePasswordService;
     }
     //Use this service to change password
-
+    //Send password change request for admin and get change password from email
 }

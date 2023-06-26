@@ -32,4 +32,11 @@ public class AdminRepositoryImpl implements AdminRepository {
         return null;
     }
 
+    @Override
+    public boolean search_for_username(String credentials) {
+        String sql = "SELECT * FROM public.check_admin_credentials(?)";
+        Object[] param = {credentials};
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, Boolean.class));
+    }
+
 }

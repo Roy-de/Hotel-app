@@ -10,5 +10,6 @@ public interface AdminRepository {
     //method to get admin details
     AdminDto get_Admin_credentials(AdminDto adminDto);
     //Method to update hotel details
-
+    //method to search for username and or email
+    boolean search_for_username(String credentials);
 }

@@ -40,8 +40,17 @@ public class UserRepositoryImpl implements UserRepository{
     }
 
     @Override
-    public UserUpdatedDto update_user(UserDetailsDto userDetailsDto) {
-        return null;
+    public int update_user(UserUpdatedDto userUpdatedDto, String credentials) {
+        String sql = "UPDATE public.user_details SET first_name = ?,last_name = ?,phone_no = ? where username = ? or email = ?";
+        Object[] params = {
+                userUpdatedDto.getFirst_name(),
+                userUpdatedDto.getLast_name(),
+                userUpdatedDto.getPhone_no(),
+                credentials,
+                credentials
+        };
+
+        return jdbcTemplate.update(sql,params);
     }
 
     @Override
