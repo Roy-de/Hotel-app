@@ -24,5 +24,5 @@ public class HotelDto {
     private int rooms_available;
     private double longitude;
     private double latitude;
-
+    private String place;
 }
