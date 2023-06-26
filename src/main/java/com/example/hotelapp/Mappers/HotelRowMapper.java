@@ -10,16 +10,17 @@ public class HotelRowMapper implements RowMapper<HotelDto> {
     @Override
     public HotelDto mapRow(ResultSet rs, int rowNum) throws SQLException {
         HotelDto hotelDto = new HotelDto();
-        hotelDto.setName(rs.getString("name"));
-        hotelDto.setLocation(rs.getString("location"));
-        hotelDto.setDescription(rs.getString("description"));
-        hotelDto.setPricing(rs.getDouble("pricing"));
-        hotelDto.setNo_of_beds(rs.getInt("no_of_beds"));
-        hotelDto.setRooms_available(rs.getInt("no_of_rooms"));
-        hotelDto.setLongitude(rs.getDouble("longitude"));
-        hotelDto.setLatitude(rs.getDouble("latitude"));
-        hotelDto.setPlace(rs.getString("place"));
-        //hotelDto.setRating(rs.getInt("rating"));
+        hotelDto.setId(rs.getInt("primary_hotel_id"));
+        hotelDto.setName(rs.getString("hotel_name"));
+        hotelDto.setLocation(rs.getString("hotel_location"));
+        hotelDto.setDescription(rs.getString("hotel_description"));
+        hotelDto.setPricing(rs.getDouble("hotel_pricing"));
+        hotelDto.setNo_of_beds(rs.getInt("hotel_no_of_beds"));
+        hotelDto.setRooms_available(rs.getInt("hotel_no_of_rooms"));
+        hotelDto.setLongitude(rs.getDouble("hotel_longitude"));
+        hotelDto.setLatitude(rs.getDouble("hotel_latitude"));
+        hotelDto.setPlace(rs.getString("hotel_place"));
+        hotelDto.setRating(rs.getInt("hotel_rating"));
         return hotelDto;
     }
 }

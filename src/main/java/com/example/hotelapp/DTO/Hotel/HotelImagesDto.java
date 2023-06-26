@@ -12,5 +12,6 @@ import lombok.Setter;
 public class HotelImagesDto {
     public int id;
     public byte image;
+    public String description;
     public int hotel_id;
 }

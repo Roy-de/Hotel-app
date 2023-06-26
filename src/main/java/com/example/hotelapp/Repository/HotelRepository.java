@@ -25,7 +25,7 @@ public interface HotelRepository {
     ---------------VIEW HOTELS--------------
      */
     //List all hotels
-    List<HotelDto> list_all_hotels(HotelDto hotelDto,HotelImagesDto hotelImagesDto);
+    List<HotelDto> list_all_hotels(String location);
     //list Hotel services
     HotelServicesDto list_hotel_services(HotelServicesDto hotelServicesDto);
     //---------------DELETE HOTEL-----------

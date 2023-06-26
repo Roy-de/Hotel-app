@@ -3,13 +3,21 @@ package com.example.hotelapp.Repository.impl;
 import com.example.hotelapp.DTO.Hotel.HotelDto;
 import com.example.hotelapp.DTO.Hotel.HotelImagesDto;
 import com.example.hotelapp.DTO.Hotel.HotelServicesDto;
+import com.example.hotelapp.Mappers.HotelRowMapper;
 import com.example.hotelapp.Repository.HotelRepository;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
 public class HotelRepositoryImpl implements HotelRepository {
+    private final JdbcTemplate jdbcTemplate;
+
+    public HotelRepositoryImpl(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     @Override
     public void create_hotel(HotelDto hotelDto) {
 
@@ -31,14 +39,10 @@ public class HotelRepositoryImpl implements HotelRepository {
     }
 
     @Override
-    public List<HotelDto> list_all_hotels(HotelDto hotelDto, HotelImagesDto hotelImagesDto) {
-        String sql = "DO $$ " +
-                "DECLARE " +
-                "    result refcursor = 'generated_result_cursor'; " +
-                "BEGIN " +
-                "    OPEN result FOR SELECT * FROM public.get_hotels_by_location(in_location := ?); " +
-                "END $$";
-        return null;
+    public List<HotelDto> list_all_hotels(String location) {
+        String sql = "SELECT * FROM public.get_hotels_by_location(?)";
+        Object[] param =  {location};
+        return jdbcTemplate.query(sql,param,new HotelRowMapper());
     }
 
     @Override

@@ -19,8 +19,6 @@ public class HotelDto {
     private String description;
     private double pricing;
     private int no_of_beds;
-    private boolean wifi;
-    private int bathrooms;
     private int rooms_available;
     private double longitude;
     private double latitude;
