@@ -22,8 +22,9 @@ public class UserServiceLayer {
     public UserServiceLayer(UserRepositoryImpl userRepository) {
         this.userRepository = userRepository;
     }
-    public void create_user_account(UserDto userDto){
+    public Object create_user_account(UserDto userDto){
         userRepository.create_user_account(userDto);
+        return null;
     }
     public UserCredentials get_user_credentials(String credentials){
        return userRepository.get_user_credentials(credentials);

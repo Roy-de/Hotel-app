@@ -6,6 +6,7 @@ import com.example.hotelapp.Service.UserService.UserServiceLayer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,9 +20,9 @@ public class UserController {
     }
     //Post mapping to post user details when creating an account
     @PostMapping("/create")
-    public ResponseEntity<String> create_user(@RequestBody @Validated UserDto user){
+    public ResponseEntity<String> create_user(@RequestBody @Validated UserDto user,@ModelAttribute Model model){
         try{
-            userServiceLayer.create_user_account(user);
+           model.addAttribute("Create user",userServiceLayer.create_user_account(user)) ;
             ResponseEntity.status(HttpStatus.CREATED).body("Account created");
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Could not create account");
