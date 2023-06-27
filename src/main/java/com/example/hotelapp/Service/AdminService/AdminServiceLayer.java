@@ -5,14 +5,11 @@ import com.example.hotelapp.DTO.Admin.AdminDto;
 import com.example.hotelapp.DTO.Hotel.HotelDto;
 import com.example.hotelapp.ExceptionHandlers.Exception.DatabaseException;
 import com.example.hotelapp.Repository.impl.AdminRepositoryImpl;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AdminServiceLayer {
     private final AdminRepositoryImpl adminRepository;
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
     public AdminServiceLayer(AdminRepositoryImpl adminRepository) {
         this.adminRepository = adminRepository;
