@@ -30,6 +30,21 @@ public class AdminServiceLayer {
 * 1. Get admin details into admin dto
 * 2. Get Admin Details into admin details dto
 * 3. Get hotel details into hotel dto*/
+    //admin service to check if username and service exists
+    public String check_admin_details_validity(AdminDto adminDto){
+        if(adminRepository.search_for_username(adminDto.getUsername())){
+            return "Username is already taken";
+        } else if (adminRepository.search_for_username(adminDto.getEmail())) {
+            return "Email is already registered";
+        }else
+            return "proceed to create account";
+    }
+    public String create_admin_details(AdminDetailsDto adminDetailsDto){
+        return "saved successfully";
+    }
+    public String create_hotel(HotelDto hotelDto){
+        return "saved successfully";
+    }
     public String create_account_and_hotel(AdminDto adminDto, AdminDetailsDto adminDetailsDto, HotelDto hotelDto){
         //Take in admin details and check if such an account exists
         try{

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/hotels")
 public class hotelController {
     private final HotelServiceLayer hotelServiceLayer;
 
@@ -20,8 +20,15 @@ public class hotelController {
         this.hotelServiceLayer = hotelServiceLayer;
     }
 
-    @GetMapping("/list_hotel/{location}")
+    @GetMapping("/{location}")
     public ResponseEntity<List<HotelDto>> list_hotels(@PathVariable String location){
-        return ResponseEntity.status(HttpStatus.OK).body(hotelServiceLayer.list_all_hotels(location));
+        try{
+            List<HotelDto> hotels = hotelServiceLayer.list_all_hotels(location);
+            return ResponseEntity.status(HttpStatus.OK).body(hotels);
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
+/*    @GetMapping("/{id}")
+    public ResponseEntity<>*/
 }
