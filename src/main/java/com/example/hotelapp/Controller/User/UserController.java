@@ -20,9 +20,9 @@ public class UserController {
     }
     //Post mapping to post user details when creating an account
     @PostMapping("/create")
-    public ResponseEntity<String> create_user(@RequestParam @Validated UserDto user,@ModelAttribute Model model){
+    public ResponseEntity<String> create_user(@RequestParam @Validated UserDto user){
         try{
-           model.addAttribute("Create user",userServiceLayer.create_user_account(user)) ;
+           userServiceLayer.create_user_account(user) ;
             ResponseEntity.status(HttpStatus.CREATED).body("Account created");
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Could not create account");
