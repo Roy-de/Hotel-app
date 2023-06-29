@@ -10,7 +10,7 @@ public class HotelImageMapper implements RowMapper<HotelImagesDto> {
     @Override
     public HotelImagesDto mapRow(ResultSet rs, int rowNum) throws SQLException {
         HotelImagesDto hotelImagesDto = new HotelImagesDto();
-        hotelImagesDto.setImage(rs.getByte("image"));
+        hotelImagesDto.setImage(new byte[]{rs.getByte("image")});
         hotelImagesDto.setHotel_id(rs.getInt("hotel_id"));
         hotelImagesDto.setDescription(rs.getString("description"));
         return hotelImagesDto;

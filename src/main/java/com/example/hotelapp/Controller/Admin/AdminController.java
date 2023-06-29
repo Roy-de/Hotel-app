@@ -3,22 +3,32 @@ package com.example.hotelapp.Controller.Admin;
 import com.example.hotelapp.DTO.Admin.AdminDetailsDto;
 import com.example.hotelapp.DTO.Admin.AdminDto;
 import com.example.hotelapp.DTO.Hotel.HotelDto;
+import com.example.hotelapp.DTO.Hotel.HotelImagesDto;
 import com.example.hotelapp.DTO.Hotel.HotelObject;
 import com.example.hotelapp.Service.AdminService.AdminServiceLayer;
+import com.example.hotelapp.Service.HotelService.HotelServiceLayer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
+    Logger logger = LoggerFactory.getLogger(LoggerFactory.class);
     private final AdminServiceLayer adminServiceLayer;
+    private final HotelServiceLayer hotelServiceLayer;
 
-    public AdminController(AdminServiceLayer adminServiceLayer) {
+    public AdminController(AdminServiceLayer adminServiceLayer, HotelServiceLayer hotelServiceLayer) {
         this.adminServiceLayer = adminServiceLayer;
+        this.hotelServiceLayer = hotelServiceLayer;
     }
     @GetMapping("/get/{credentials}")
     public ResponseEntity<Boolean> get_admin(@PathVariable String credentials){
@@ -30,6 +40,9 @@ public class AdminController {
     public ResponseEntity<String> create_account(@RequestBody AdminDto adminDto){
         //Get user details then check if the two objects exist
         String validityMessage = adminServiceLayer.check_admin_details_validity(adminDto);
+
+
+        logger.info(validityMessage);
         if(validityMessage.equals("Username is already taken")){
            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(validityMessage);
         } else if (validityMessage.equals("Email is already registered")) {
@@ -65,6 +78,33 @@ public class AdminController {
     }
     //Done
     /*--------------- UPDATE ADMIN DETAILS, HOTEL DETAILS, HOTEL IMAGES, HOTEL SERVICES -------------------*/
+    @PutMapping("/{hotel_id}/images")
+    public ResponseEntity<String> insertImages(@PathVariable("hotel_id") int hotelId,
+                                               @RequestParam(value = "images") List<MultipartFile> images,
+                                               @RequestParam(value = "description",required = false) List<String> descriptions) {
+        try {
+            if (images == null || images.isEmpty()) {
+                return ResponseEntity.badRequest().body("No images provided");
+            }
+
+            List<HotelImagesDto> hotelImagesDtoList = new ArrayList<>();
+
+            for (int i = 0; i < images.size(); i++) {
+                MultipartFile image = images.get(i);
+                String description = (descriptions != null && i < descriptions.size()) ? descriptions.get(i) : null;
+                byte[] imageBytes = image.getBytes();
+
+                HotelImagesDto hotelImagesDto = new HotelImagesDto(imageBytes, description);
+                hotelImagesDtoList.add(hotelImagesDto);
+            }
+
+            hotelServiceLayer.insert_image(hotelId, hotelImagesDtoList);
+            return ResponseEntity.ok("Success");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
+        }
+    }
+
     @PutMapping("/update_details")
     public ResponseEntity<?> update_details(){
         return null;

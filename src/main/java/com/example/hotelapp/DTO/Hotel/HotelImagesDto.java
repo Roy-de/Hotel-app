@@ -10,8 +10,13 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HotelImagesDto {
-    public int id;
-    public byte image;
-    public String description;
-    public int hotel_id;
+    private int id;
+    private byte[] image;
+    private String description;
+    private int hotel_id;
+
+    public HotelImagesDto(byte[] image, String description) {
+        this.image = image;
+        this.description = description;
+    }
 }

@@ -35,4 +35,16 @@ public class HotelServiceLayer {
         HotelServicesDto hotelServicesDto = new HotelServicesDto();
         return new HotelObject(hotelDto,hotelImagesDtos,hotelServicesDto);
     }
+    public void insert_image(int Hotel_id,List<HotelImagesDto> hotelImagesDtoList){
+        List<byte[]> images = new ArrayList<>();
+        List<String> descriptions = new ArrayList<>();
+
+        for(HotelImagesDto hotelImagesDto: hotelImagesDtoList){
+            byte[] imageFile = hotelImagesDto.getImage();
+            String description = hotelImagesDto.getDescription();
+            images.add(imageFile);
+            descriptions.add(description);
+        }
+        hotelRepository.insert_images(images,descriptions,Hotel_id);
+    }
 }

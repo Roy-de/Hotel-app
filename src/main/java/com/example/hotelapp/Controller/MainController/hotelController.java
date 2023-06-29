@@ -30,7 +30,7 @@ public class hotelController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    @GetMapping("/{id}")
+    @GetMapping("/get_hotel/{id}")
     public ResponseEntity<HotelObject> getHotelDetails(@PathVariable int id){
        return ResponseEntity.status(HttpStatus.OK).body(hotelServiceLayer.getHotel(id));
     }

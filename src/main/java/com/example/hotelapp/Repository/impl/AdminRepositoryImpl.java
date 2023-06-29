@@ -66,6 +66,14 @@ public class AdminRepositoryImpl implements AdminRepository {
         return null;
     }
 
+/*
+    @Override
+    public AdminDto get_Admin_credentials(AdminDto adminDto) {
+        String sql = "SELECT * FROM public.get_admin_credentials(?)";
+        return jdbcTemplate.query(sql,)
+    }
+*/
+
     @Override
     public boolean search_for_username(String credentials) {
         String sql = "SELECT * FROM public.check_admin_credentials(?)";

@@ -12,6 +12,8 @@ public interface HotelRepository {
     //---------CREATE HOTEL---------------
     //Create hotel
     void create_hotel(HotelDto hotelDto);
+    //----------INSERT IMAGES -------------
+    void insert_images(List<byte[]> images, List<String> descriptions,int Hotel_id);
     /*
     ---------------- EDIT HOTEL -----------
      */
@@ -28,6 +30,8 @@ public interface HotelRepository {
     List<HotelDto> list_all_hotels(String location);
     //list Hotel services
     HotelServicesDto list_hotel_services(HotelServicesDto hotelServicesDto);
+    //Get hotel images using the hotel_id
+    List<HotelImagesDto> get_hotel_images(int id);
     //---------------DELETE HOTEL-----------
     void delete_hotel(HotelDto hotelDto);
 }
