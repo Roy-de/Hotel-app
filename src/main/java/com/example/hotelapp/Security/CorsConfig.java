@@ -1,3 +1,4 @@
+/*
 package com.example.hotelapp.Security;
 
 import org.springframework.context.annotation.Configuration;
@@ -16,3 +17,4 @@ public class CorsConfig {
         return new CorsFilter(source);
     }
 }
+*/

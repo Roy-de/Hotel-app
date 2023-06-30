@@ -1,3 +1,4 @@
+/*
 package com.example.hotelapp.Security;
 
 import org.springframework.context.annotation.Bean;
@@ -13,3 +14,4 @@ public class SecurityConfig {
         return http.authorizeHttpRequests(requests -> requests.anyRequest().permitAll()).build();
     }
 }
+*/
