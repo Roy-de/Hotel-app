@@ -2,6 +2,7 @@ package com.example.hotelapp.Repository;
 
 import com.example.hotelapp.DTO.Hotel.HotelDto;
 import com.example.hotelapp.DTO.Hotel.HotelImagesDto;
+import com.example.hotelapp.DTO.Hotel.HotelObject;
 import com.example.hotelapp.DTO.Hotel.HotelServicesDto;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +12,7 @@ import java.util.List;
 public interface HotelRepository {
     //---------CREATE HOTEL---------------
     //Create hotel
-    void create_hotel(HotelDto hotelDto);
+    int create_hotel(HotelDto hotelDto,HotelServicesDto hotelServicesDto);
     //----------INSERT IMAGES -------------
     void insert_images(List<byte[]> images, List<String> descriptions,int Hotel_id);
     /*
@@ -32,6 +33,8 @@ public interface HotelRepository {
     HotelServicesDto list_hotel_services(HotelServicesDto hotelServicesDto);
     //Get hotel images using the hotel_id
     List<HotelImagesDto> get_hotel_images(int id);
+    //Get hotel object
+    HotelObject get_hotel(int id);
     //---------------DELETE HOTEL-----------
-    void delete_hotel(HotelDto hotelDto);
+    void delete_hotel(int id);
 }

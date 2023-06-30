@@ -3,6 +3,9 @@ package com.example.hotelapp.Repository.impl;
 import com.example.hotelapp.DTO.Admin.AdminDetailsDto;
 import com.example.hotelapp.DTO.Admin.AdminDto;
 import com.example.hotelapp.DTO.Hotel.HotelDto;
+import com.example.hotelapp.DTO.Hotel.HotelImagesDto;
+import com.example.hotelapp.DTO.Hotel.HotelObject;
+import com.example.hotelapp.DTO.Hotel.HotelServicesDto;
 import com.example.hotelapp.Repository.AdminRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -10,7 +13,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -81,4 +87,99 @@ public class AdminRepositoryImpl implements AdminRepository {
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, Boolean.class));
     }
 
+    @Override
+    public List<HotelObject> get_all_hotels(int admin_id) {
+        String hotelQuery = "SELECT id, name, location, description, pricing, no_of_beds, " +
+                "no_of_rooms, longitude, latitude, place " +
+                "FROM public.hotel " +
+                "WHERE admin_id = ?";
+
+        List<HotelObject> hotelObjects = jdbcTemplate.query(hotelQuery, new Object[]{admin_id},
+                (rs, rowNum) -> {
+                    HotelObject hotelObject = new HotelObject();
+                    HotelDto hotelDto = new HotelDto();
+                    hotelDto.setId(rs.getInt("id"));
+                    hotelDto.setName(rs.getString("name"));
+                    hotelDto.setLocation(rs.getString("location"));
+                    hotelDto.setDescription(rs.getString("description"));
+                    hotelDto.setPricing(rs.getDouble("pricing"));
+                    hotelDto.setNo_of_beds(rs.getInt("no_of_beds"));
+                    hotelDto.setRooms_available(rs.getInt("no_of_rooms"));
+                    hotelDto.setLongitude(rs.getDouble("longitude"));
+                    hotelDto.setLatitude(rs.getDouble("latitude"));
+                    hotelDto.setPlace(rs.getString("place"));
+                    hotelObject.setHotelDto(hotelDto);
+                    return hotelObject;
+                });
+
+        for (HotelObject hotelObject : hotelObjects) {
+            int hotelId = hotelObject.getHotelDto().getId();
+
+
+            List<HotelImagesDto> images = getHotelImagesByHotelId(hotelId);
+            hotelObject.setHotelImagesDto(images);
+
+            HotelServicesDto services = getHotelServicesByHotelId(hotelId);
+            hotelObject.setHotelServicesDto(services);
+        }
+
+        return hotelObjects;
+    }
+   /* private HotelDto getHotel(int admin_id){
+        String hotelQuery = "SELECT id, name, location, description, pricing, no_of_beds, " +
+                "no_of_rooms, longitude, latitude, place " +
+                "FROM public.hotel " +
+                "WHERE admin_id = ?";
+        return jdbcTemplate.query(hotelQuery,new Object[]{admin_id},(rs -> {
+            HotelDto hotelDto = new HotelDto();
+            hotelDto.setId(rs.getInt(rs.getInt("id")));
+            hotelDetails(rs, hotelDto);
+            return hotelDto;
+        }));
+    }*/
+
+    private List<HotelImagesDto> getHotelImagesByHotelId(int hotelId) {
+        String imagesQuery = "SELECT id, image, description, hotel_id " +
+                "FROM hotel_images " +
+                "WHERE hotel_id = ?";
+
+        return jdbcTemplate.query(imagesQuery, new Object[]{hotelId},
+                (rs, rowNum) -> {
+                    HotelImagesDto hotelImagesDto = new HotelImagesDto();
+                    hotelImagesDto.setId(rs.getInt("id"));
+                    hotelImagesDto.setImage(rs.getBytes("image"));
+                    hotelImagesDto.setDescription(rs.getString("description"));
+                    hotelImagesDto.setHotel_id(rs.getInt("hotel_id"));
+                    return hotelImagesDto;
+                });
+    }
+
+    private HotelServicesDto getHotelServicesByHotelId(int hotelId) {
+        String servicesQuery = "SELECT hotel_id, views, entertainment, parking, washing_machine, " +
+                "swimming, wifi, bar, breakfast, fitness_centre, restaurant, room_services " +
+                "FROM hotel_services " +
+                "WHERE hotel_id = ?";
+
+        return jdbcTemplate.queryForObject(servicesQuery, new Object[]{hotelId},
+                (rs, rowNum) -> {
+                    HotelServicesDto hotelServicesDto = new HotelServicesDto();
+                    hotelServicesDto.setHotel_id(rs.getInt("hotel_id"));
+                    hotelServicesDto.setViews(rs.getBoolean("views"));
+                    services(rs, hotelServicesDto);
+                    hotelServicesDto.setRoom_services(rs.getBoolean("room_services"));
+                    return hotelServicesDto;
+                });
+    }
+
+    public static void services(ResultSet rs, HotelServicesDto hotelServicesDto) throws SQLException {
+        hotelServicesDto.setEntertainment(rs.getBoolean("entertainment"));
+        hotelServicesDto.setParking(rs.getBoolean("parking"));
+        hotelServicesDto.setWashing_services(rs.getBoolean("washing_machine"));
+        hotelServicesDto.setSwimming_pool(rs.getBoolean("swimming"));
+        hotelServicesDto.setWifi(rs.getBoolean("wifi"));
+        hotelServicesDto.setBar(rs.getBoolean("bar"));
+        hotelServicesDto.setBreakfast(rs.getBoolean("breakfast"));
+        hotelServicesDto.setFitness_centre(rs.getBoolean("fitness_centre"));
+        hotelServicesDto.setRestaurant(rs.getBoolean("restaurant"));
+    }
 }

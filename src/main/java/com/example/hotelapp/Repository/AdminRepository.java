@@ -3,7 +3,10 @@ package com.example.hotelapp.Repository;
 import com.example.hotelapp.DTO.Admin.AdminDetailsDto;
 import com.example.hotelapp.DTO.Admin.AdminDto;
 import com.example.hotelapp.DTO.Hotel.HotelDto;
+import com.example.hotelapp.DTO.Hotel.HotelObject;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface AdminRepository {
@@ -14,4 +17,5 @@ public interface AdminRepository {
     //Method to update hotel details
     //method to search for username and or email
     boolean search_for_username(String credentials);
+    List<HotelObject> get_all_hotels(int admin_id);
 }

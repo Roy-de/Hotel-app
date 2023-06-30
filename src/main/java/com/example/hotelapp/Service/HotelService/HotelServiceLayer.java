@@ -30,10 +30,7 @@ public class HotelServiceLayer {
     }
     //List hotel and services offered and images it has
     public HotelObject getHotel(int hotel_id){
-        HotelDto hotelDto = new HotelDto();
-        List<HotelImagesDto> hotelImagesDtos = new ArrayList<>();
-        HotelServicesDto hotelServicesDto = new HotelServicesDto();
-        return new HotelObject(hotelDto,hotelImagesDtos,hotelServicesDto);
+        return hotelRepository.get_hotel(hotel_id);
     }
     public void insert_image(int Hotel_id,List<HotelImagesDto> hotelImagesDtoList){
         List<byte[]> images = new ArrayList<>();
@@ -46,5 +43,11 @@ public class HotelServiceLayer {
             descriptions.add(description);
         }
         hotelRepository.insert_images(images,descriptions,Hotel_id);
+    }
+    public void create_hotel(HotelDto hotelDto,HotelServicesDto hotelServicesDto,List<HotelImagesDto> hotelImagesDtoList){
+        //Create the hotel
+        int id = hotelRepository.create_hotel(hotelDto,hotelServicesDto);
+        //associate hotel images to hotel
+        insert_image(id,hotelImagesDtoList);
     }
 }

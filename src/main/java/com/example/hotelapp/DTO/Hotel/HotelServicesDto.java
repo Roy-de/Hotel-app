@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HotelServicesDto {
+    private int id;
     private boolean views;
     private boolean entertainment;
     private boolean parking;
@@ -21,4 +22,5 @@ public class HotelServicesDto {
     private boolean fitness_centre;
     private boolean restaurant;
     private boolean room_services;
+    private int hotel_id;
 }

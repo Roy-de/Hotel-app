@@ -12,15 +12,7 @@ public class HotelServiceMapper implements RowMapper<HotelServicesDto> {
 
         HotelServicesDto hotelServicesDto = new HotelServicesDto();
         hotelServicesDto.setViews(rs.getBoolean("view"));
-        hotelServicesDto.setEntertainment(rs.getBoolean("entertainment"));
-        hotelServicesDto.setParking(rs.getBoolean("parking"));
-        hotelServicesDto.setWashing_services(rs.getBoolean("washing_machine"));
-        hotelServicesDto.setSwimming_pool(rs.getBoolean("swimming"));
-        hotelServicesDto.setWifi(rs.getBoolean("wifi"));
-        hotelServicesDto.setBar(rs.getBoolean("bar"));
-        hotelServicesDto.setBreakfast(rs.getBoolean("breakfast"));
-        hotelServicesDto.setFitness_centre(rs.getBoolean("fitness_centre"));
-        hotelServicesDto.setRestaurant(rs.getBoolean("restaurant"));
+        HotelObjectMapper.Services(rs, hotelServicesDto);
         hotelServicesDto.setRoom_services(rs.getBoolean("room_service"));
         return hotelServicesDto;
     }

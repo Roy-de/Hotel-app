@@ -3,9 +3,12 @@ package com.example.hotelapp.Service.AdminService;
 import com.example.hotelapp.DTO.Admin.AdminDetailsDto;
 import com.example.hotelapp.DTO.Admin.AdminDto;
 import com.example.hotelapp.DTO.Hotel.HotelDto;
+import com.example.hotelapp.DTO.Hotel.HotelObject;
 import com.example.hotelapp.ExceptionHandlers.Exception.DatabaseException;
 import com.example.hotelapp.Repository.impl.AdminRepositoryImpl;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class AdminServiceLayer {
@@ -64,5 +67,8 @@ public class AdminServiceLayer {
     }
     public boolean isAdminExist(String credentials){
         return adminRepository.search_for_username(credentials);
+    }
+    public List<HotelObject> get_all_hotels(int hotel_id){
+        return adminRepository.get_all_hotels(hotel_id);
     }
 }
