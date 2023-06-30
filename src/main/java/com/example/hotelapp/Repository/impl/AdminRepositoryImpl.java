@@ -125,19 +125,6 @@ public class AdminRepositoryImpl implements AdminRepository {
 
         return hotelObjects;
     }
-   /* private HotelDto getHotel(int admin_id){
-        String hotelQuery = "SELECT id, name, location, description, pricing, no_of_beds, " +
-                "no_of_rooms, longitude, latitude, place " +
-                "FROM public.hotel " +
-                "WHERE admin_id = ?";
-        return jdbcTemplate.query(hotelQuery,new Object[]{admin_id},(rs -> {
-            HotelDto hotelDto = new HotelDto();
-            hotelDto.setId(rs.getInt(rs.getInt("id")));
-            hotelDetails(rs, hotelDto);
-            return hotelDto;
-        }));
-    }*/
-
     private List<HotelImagesDto> getHotelImagesByHotelId(int hotelId) {
         String imagesQuery = "SELECT id, image, description, hotel_id " +
                 "FROM hotel_images " +
