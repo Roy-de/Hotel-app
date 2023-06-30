@@ -31,35 +31,6 @@ public class HotelRepositoryImpl implements HotelRepository {
 
     @Override
     public int create_hotel(HotelDto hotelDto,HotelServicesDto hotelServicesDto) {
-        /*String sql ="CALL public.create_hotel(:hotel_admin_id, :hotel_name, :hotel_location, :hotel_description," +
-                " :hotel_pricing, :hotel_beds_no, :hotel_no_of_rooms, :hotel_longitude, :hotel_latitude" +
-                ", :hotel_place, :h_views , :h_entertainment, :h_parking , :h_washing_machine," +
-                " :h_swimming, :h_wifi, :h_bar, :h_breakfast, :h_fitness_centre, :h_restaurant" +
-                ", :h_room_services)";
-        Object[] params = {
-                adminDto.getId(),
-                hotelDto.getName(),
-                hotelDto.getLocation(),
-                hotelDto.getDescription(),
-                hotelDto.getPricing(),
-                hotelDto.getNo_of_beds(),
-                hotelDto.getRooms_available(),
-                hotelDto.getLongitude(),
-                hotelDto.getLatitude(),
-                hotelDto.getPlace(),
-                hotelServicesDto.isViews(),
-                hotelServicesDto.isEntertainment(),
-                hotelServicesDto.isParking(),
-                hotelServicesDto.isWashing_services(),
-                hotelServicesDto.isSwimming_pool(),
-                hotelServicesDto.isWifi(),
-                hotelServicesDto.isBar(),
-                hotelServicesDto.isBreakfast(),
-                hotelServicesDto.isFitness_centre(),
-                hotelServicesDto.isRestaurant(),
-                hotelServicesDto.isRoom_services()
-        };
-        jdbcTemplate.update(sql,params)*/
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(con -> {
             PreparedStatement ps = con.prepareStatement("CALL public.create_hotel(" +

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.NotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,7 +40,8 @@ public class AdminController {
     }
     //Controllers used to create an admin account plus the first listing
     @PostMapping("/create_account")
-    public ResponseEntity<String> create_account(@RequestBody AdminDto adminDto){
+    public ResponseEntity<String> create_account(@RequestBody AdminDto adminDto, HttpServletResponse response){
+        response.setHeader("Access-Control-Allow-Origin","https://hotel-app-ipd6.onrender.com");
         //Get user details then check if the two objects exist
         String validityMessage = adminServiceLayer.check_admin_details_validity(adminDto);
         if(validityMessage.equals("Username is already taken")){
