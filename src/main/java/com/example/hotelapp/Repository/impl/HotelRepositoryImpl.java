@@ -5,10 +5,8 @@ import com.example.hotelapp.DTO.Hotel.HotelDto;
 import com.example.hotelapp.DTO.Hotel.HotelImagesDto;
 import com.example.hotelapp.DTO.Hotel.HotelObject;
 import com.example.hotelapp.DTO.Hotel.HotelServicesDto;
-import com.example.hotelapp.Mappers.HotelImageMapper;
-import com.example.hotelapp.Mappers.HotelRowMapper;
+import com.example.hotelapp.Mappers.HotelObjectMapper;
 import com.example.hotelapp.Repository.HotelRepository;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -90,33 +88,26 @@ public class HotelRepositoryImpl implements HotelRepository {
     }
 
     @Override
-    public List<HotelDto> list_all_hotels(String location) {
-        String sql = "SELECT * FROM public.get_hotels_by_location(?)";
-        Object[] param =  {location};
-        return jdbcTemplate.query(sql,param,new HotelRowMapper());
+    public List<HotelObject> list_all_hotels(String location) {
+        HotelObjectMapper hotelObjectMapper = new HotelObjectMapper(jdbcTemplate);
+        String hotelSql = "SELECT * FROM public.get_hotels_by_location_or_admin_or_id(?,NULL,NULL)";
+        List<HotelObject> hotels = hotelObjectMapper.get_hotel_details_by_location(hotelSql, location);
+        if (!hotels.isEmpty()) {
+            return hotels;
+        } else {
+            return null; // or throw an exception indicating no hotel found
+        }
     }
 
     @Override
-    public HotelServicesDto list_hotel_services(HotelServicesDto hotelServicesDto) {
-        return null;
-    }
-
-    @Override
-    public List<HotelImagesDto> get_hotel_images(int id) {
-        String sql = "SELECT * FROM public.hotel_images where hotel_id = (?)";
-        Object[] param = {id};
-        return jdbcTemplate.query(sql,param, new HotelImageMapper());
-    }
-
-    @Override
-    public HotelObject get_hotel(int id) {
-        String hotelSql = "SELECT * FROM public.hotel WHERE admin_id = ?";
-        List<HotelDto> hotels =  jdbcTemplate.query(hotelSql,new Object[]{id},new BeanPropertyRowMapper<>(HotelDto.class));
-        return null;
-    }
-
-    @Override
-    public void delete_hotel(int id) {
-
+    public HotelObject get_hotel_by_id(int id) {
+        HotelObjectMapper hotelObjectMapper = new HotelObjectMapper(jdbcTemplate);
+        String hotelSql = "SELECT * FROM public.get_hotels_by_location_or_admin_or_id(NULL,NULL,?)";
+        List<HotelObject> hotels = hotelObjectMapper.get_hotel_details_by_id(hotelSql, id);
+        if (!hotels.isEmpty()) {
+            return hotels.get(0);
+        } else {
+            return null; // or throw an exception indicating no hotel found
+        }
     }
 }

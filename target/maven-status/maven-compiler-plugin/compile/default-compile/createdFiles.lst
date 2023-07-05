@@ -1,5 +1,6 @@
 com/example/hotelapp/DTO/User/UserUpdatedDto.class
 com/example/hotelapp/Repository/AdminRepository.class
+com/example/hotelapp/DAO/HotelDao.class
 com/example/hotelapp/Mappers/HotelObjectMapper.class
 com/example/hotelapp/Service/AdminService/AdminServiceLayer.class
 com/example/hotelapp/Mappers/HotelServiceMapper.class
@@ -23,7 +24,7 @@ com/example/hotelapp/DTO/Hotel/HotelServicesDto.class
 com/example/hotelapp/DTO/Hotel/HotelImagesDto.class
 com/example/hotelapp/DTO/Comments/CommentDto.class
 com/example/hotelapp/ExceptionHandlers/Response/DatabaseResponse.class
-com/example/hotelapp/Mappers/AdminDtoRowMapper.class
+com/example/hotelapp/DAO/AdminDetailsDao.class
 com/example/hotelapp/Service/PasswordService/ChangePasswordServiceImpl.class
 com/example/hotelapp/Mappers/CommentMapper.class
 com/example/hotelapp/DTO/Booking/BookingDto.class
@@ -36,6 +37,7 @@ com/example/hotelapp/DTO/Admin/AdminDetailsDto.class
 com/example/hotelapp/ExceptionHandlers/Exception/UserNotFoundException.class
 com/example/hotelapp/ExceptionHandlers/Exception/UsernameAlreadyTakenException.class
 com/example/hotelapp/Repository/impl/UserRepositoryImpl.class
+com/example/hotelapp/Mappers/AdminRowMapper.class
 com/example/hotelapp/Service/UserService/UserServiceLayer.class
 com/example/hotelapp/Controller/MainController/hotelController.class
 com/example/hotelapp/Service/PasswordService/PasswordService.class
@@ -43,7 +45,9 @@ com/example/hotelapp/Repository/impl/AdminRepositoryImpl.class
 com/example/hotelapp/ExceptionHandlers/Exception/DatabaseException.class
 com/example/hotelapp/Repository/BookingRepository.class
 com/example/hotelapp/DTO/Hotel/HotelObject.class
+com/example/hotelapp/DAO/AdminDao.class
 com/example/hotelapp/Mappers/BookingMapper.class
 com/example/hotelapp/Service/BookingService/BookingServiceLayer.class
 com/example/hotelapp/DTO/User/UserDetailsDto.class
 com/example/hotelapp/Controller/User/UserController.class
+com/example/hotelapp/Service/AdminService/AdminDetailsService.class

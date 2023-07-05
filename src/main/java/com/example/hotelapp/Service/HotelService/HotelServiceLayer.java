@@ -24,13 +24,12 @@ public class HotelServiceLayer {
 /*    public List<HotelDto> list_hotels(){
         return
     }*/
-    public List<HotelDto> list_all_hotels(String location){
-        location = location.toLowerCase();
-        return hotelRepository.list_all_hotels(location);
+    public List<HotelObject> list_all_hotels(String location){
+        return hotelRepository.list_all_hotels(location.toLowerCase());
     }
     //List hotel and services offered and images it has
     public HotelObject getHotel(int hotel_id){
-        return hotelRepository.get_hotel(hotel_id);
+        return hotelRepository.get_hotel_by_id(hotel_id);
     }
     public void insert_image(int Hotel_id,List<HotelImagesDto> hotelImagesDtoList){
         List<byte[]> images = new ArrayList<>();

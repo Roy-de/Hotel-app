@@ -1,6 +1,5 @@
 package com.example.hotelapp.Controller.MainController;
 
-import com.example.hotelapp.DTO.Hotel.HotelDto;
 import com.example.hotelapp.DTO.Hotel.HotelObject;
 import com.example.hotelapp.Service.HotelService.HotelServiceLayer;
 import org.springframework.http.HttpStatus;
@@ -22,9 +21,9 @@ public class hotelController {
     }
 
     @GetMapping("/{location}")
-    public ResponseEntity<List<HotelDto>> list_hotels(@PathVariable String location){
+    public ResponseEntity<List<HotelObject>> list_hotels(@PathVariable String location){
         try{
-            List<HotelDto> hotels = hotelServiceLayer.list_all_hotels(location);
+            List<HotelObject> hotels = hotelServiceLayer.list_all_hotels(location);
             return ResponseEntity.status(HttpStatus.OK).body(hotels);
         }catch(Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

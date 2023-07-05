@@ -6,13 +6,13 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class AdminDtoRowMapper implements RowMapper<AdminDto> {
+public class AdminRowMapper implements RowMapper<AdminDto> {
     @Override
     public AdminDto mapRow(ResultSet rs, int rowNum) throws SQLException {
         AdminDto adminDto = new AdminDto();
-        adminDto.setUsername(rs.getString("username"));
-        adminDto.setEmail(rs.getString("email"));
-        adminDto.setPassword(rs.getString("password"));
+        adminDto.setUsername(rs.getString(1));
+        adminDto.setEmail(rs.getString(2));
+        adminDto.setPassword(rs.getString(3));
         return adminDto;
     }
 }

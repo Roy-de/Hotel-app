@@ -1,7 +1,10 @@
 package com.example.hotelapp.Repository.impl;
 
 import com.example.hotelapp.DTO.ChangedPassword;
-import com.example.hotelapp.DTO.User.*;
+import com.example.hotelapp.DTO.User.UserCredentials;
+import com.example.hotelapp.DTO.User.UserDetailsDto;
+import com.example.hotelapp.DTO.User.UserDto;
+import com.example.hotelapp.DTO.User.UserUpdatedDto;
 import com.example.hotelapp.Mappers.userRowMapper;
 import com.example.hotelapp.Repository.UserRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -36,7 +39,7 @@ public class UserRepositoryImpl implements UserRepository{
     @Override
     public UserCredentials get_user_credentials(String credentials) {
         String sql = "SELECT user_email,user_password,user_username FROM public.get_user_credentials(?)";
-        return jdbcTemplate.queryForObject(sql, new Object[]{credentials}, new userRowMapper());
+        return jdbcTemplate.queryForObject(sql,new userRowMapper(),credentials);
     }
 
     @Override
@@ -60,6 +63,7 @@ public class UserRepositoryImpl implements UserRepository{
 
     @Override
     public void delete_user(UserDto userDto) {
-
+        String sql = "DELETE FROM public.user_account WHERE email = ?";
+        jdbcTemplate.update(sql,userDto.getUsername());
     }
 }

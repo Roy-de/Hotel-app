@@ -5,71 +5,63 @@ import com.example.hotelapp.DTO.Admin.AdminDto;
 import com.example.hotelapp.DTO.Hotel.HotelDto;
 import com.example.hotelapp.DTO.Hotel.HotelImagesDto;
 import com.example.hotelapp.DTO.Hotel.HotelObject;
-import com.example.hotelapp.DTO.Hotel.HotelServicesDto;
+import com.example.hotelapp.ExceptionHandlers.Exception.DatabaseException;
+import com.example.hotelapp.Mappers.AdminRowMapper;
+import com.example.hotelapp.Mappers.HotelObjectMapper;
 import com.example.hotelapp.Repository.AdminRepository;
+import com.example.hotelapp.Service.HotelService.HotelServiceLayer;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 @Repository
 public class AdminRepositoryImpl implements AdminRepository {
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final HotelServiceLayer hotelServiceLayer;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final JdbcTemplate jdbcTemplate;
 
-    public AdminRepositoryImpl(NamedParameterJdbcTemplate namedParameterJdbcTemplate, JdbcTemplate jdbcTemplate) {
-        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+    public AdminRepositoryImpl(HotelServiceLayer hotelServiceLayer, JdbcTemplate jdbcTemplate) {
+        this.hotelServiceLayer = hotelServiceLayer;
         this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
-    public void create_account(AdminDto adminDto,AdminDetailsDto adminDetailsDto, HotelDto hotelDto) {
-       /* String sql = "INSERT INTO public.admin_acc(username,email,password) VALUES (?,?,?)";
+    public void create_account(AdminDto adminDto, AdminDetailsDto adminDetailsDto, HotelDto hotelDto, List<HotelImagesDto> hotelImagesDtoList) {
+        String sql = "SELECT public.create_admin_and_hotel(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         Object[] params = {
                 adminDto.getUsername(),
                 adminDto.getEmail(),
-                passwordEncoder.encode(adminDto.getPassword())
+                passwordEncoder.encode(adminDto.getPassword()),
+                adminDetailsDto.getFirst_name(),
+                adminDetailsDto.getLast_name(),
+                adminDetailsDto.getPhone_no(),
+                hotelDto.getName(),
+                hotelDto.getLocation().toLowerCase(),
+                hotelDto.getPlace().toLowerCase(),
+                hotelDto.getDescription(),
+                hotelDto.getPricing(),
+                hotelDto.getNo_of_beds(),
+                hotelDto.getRooms_available(),
+                hotelDto.getLongitude(),
+                hotelDto.getLatitude(),
+                adminDetailsDto.getAlt_phone_no(),
+                adminDetailsDto.getAlt_email()
         };
-        jdbcTemplate.update(sql,params);*/
-        String sql = "CALL public.create_admin_and_hotel(:admin_username, :admin_email, :admin_password , :admin_first_name, " +
-                ":admin_last_name,:admin_phone_no,:hotel_name, :hotel_location, " +
-                ":hotel_place, :hotel_description, :hotel_pricing, :hotel_no_of_beds, " +
-                ":hotel_no_of_rooms, :hotel_longitude, :hotel_latitude, :alt_admin_phone_no, :alt_admin_email)";
-        Map<String,Object> paramMap = new HashMap<>();
-        paramMap.put("admin_username",adminDto.getUsername());
-        paramMap.put("admin_email",adminDto.getEmail());
-        paramMap.put("admin_password",passwordEncoder.encode(adminDto.getPassword()));
-        //--------------------------------------------------------
-        paramMap.put("admin_first_name",adminDetailsDto.getFirst_name());
-        paramMap.put("admin_last_name",adminDetailsDto.getLast_name());
-        paramMap.put("admin_phone_no",adminDetailsDto.getPhone_no());
-        paramMap.put("alt_admin_phone_no",adminDetailsDto.getAlt_phone_no());
-        paramMap.put("alt_admin_email",adminDetailsDto.getAlt_email());
-        //--------------------------------------------------------
-        paramMap.put("hotel_name",hotelDto.getName());
-        paramMap.put("hotel_location",hotelDto.getLocation().toLowerCase());
-        paramMap.put("hotel_place",hotelDto.getPlace().toLowerCase());
-        paramMap.put("hotel_description",hotelDto.getDescription());
-        paramMap.put("hotel_pricing",hotelDto.getPricing());
-        paramMap.put("hotel_no_of_beds",hotelDto.getNo_of_beds());
-        paramMap.put("hotel_no_of_rooms",hotelDto.getRooms_available());
-        paramMap.put("hotel_longitude",hotelDto.getLongitude());
-        paramMap.put("hotel_latitude",hotelDto.getLatitude());
+        List<Integer> result = jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt(1), params);
+        int hotel_id = result.isEmpty() ? 0 : result.get(0);
 
-        namedParameterJdbcTemplate.update(sql,paramMap);
+        if (hotel_id != 0) {
+            hotelServiceLayer.insert_image(hotel_id, hotelImagesDtoList);
+        }
     }
 
+
     @Override
-    public AdminDto get_Admin_credentials(AdminDto adminDto) {
-        return null;
+    public AdminDto get_Admin_credentials(String credential) {
+        String sql = "SELECT * FROM public.get_admin_credentials(?)";
+        return jdbcTemplate.queryForObject(sql,new AdminRowMapper(),credential);
     }
 
 /*
@@ -83,90 +75,25 @@ public class AdminRepositoryImpl implements AdminRepository {
     @Override
     public boolean search_for_username(String credentials) {
         String sql = "SELECT * FROM public.check_admin_credentials(?)";
-        Object[] param = {credentials};
-        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, Boolean.class));
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class,credentials));
     }
 
     @Override
     public List<HotelObject> get_all_hotels(int admin_id) {
-        String hotelQuery = "SELECT id, name, location, description, pricing, no_of_beds, " +
-                "no_of_rooms, longitude, latitude, place " +
-                "FROM public.hotel " +
-                "WHERE admin_id = ?";
+        HotelObjectMapper hotelObjectMapper = new HotelObjectMapper(jdbcTemplate);
+        String hotelSql = "SELECT * FROM public.get_hotels_by_location_or_admin_or_id(NULL,?,NULL)";
+        return hotelObjectMapper.get_hotel_details_by_id(hotelSql, admin_id);
+    }
 
-        List<HotelObject> hotelObjects = jdbcTemplate.query(hotelQuery, new Object[]{admin_id},
-                (rs, rowNum) -> {
-                    HotelObject hotelObject = new HotelObject();
-                    HotelDto hotelDto = new HotelDto();
-                    hotelDto.setId(rs.getInt("id"));
-                    hotelDto.setName(rs.getString("name"));
-                    hotelDto.setLocation(rs.getString("location"));
-                    hotelDto.setDescription(rs.getString("description"));
-                    hotelDto.setPricing(rs.getDouble("pricing"));
-                    hotelDto.setNo_of_beds(rs.getInt("no_of_beds"));
-                    hotelDto.setRooms_available(rs.getInt("no_of_rooms"));
-                    hotelDto.setLongitude(rs.getDouble("longitude"));
-                    hotelDto.setLatitude(rs.getDouble("latitude"));
-                    hotelDto.setPlace(rs.getString("place"));
-                    hotelObject.setHotelDto(hotelDto);
-                    return hotelObject;
-                });
-
-        for (HotelObject hotelObject : hotelObjects) {
-            int hotelId = hotelObject.getHotelDto().getId();
-
-
-            List<HotelImagesDto> images = getHotelImagesByHotelId(hotelId);
-            hotelObject.setHotelImagesDto(images);
-
-            HotelServicesDto services = getHotelServicesByHotelId(hotelId);
-            hotelObject.setHotelServicesDto(services);
+    @Override
+    public String delete_hotel(int id) {
+        String sql = "DELETE FROM public.hotel WHERE id = ?";
+        try{
+            jdbcTemplate.update(sql,id);
+            return "Successfully deleted hotel";
+        }catch (DatabaseException e){
+            return "Error: "+e;
         }
-
-        return hotelObjects;
-    }
-    private List<HotelImagesDto> getHotelImagesByHotelId(int hotelId) {
-        String imagesQuery = "SELECT id, image, description, hotel_id " +
-                "FROM hotel_images " +
-                "WHERE hotel_id = ?";
-
-        return jdbcTemplate.query(imagesQuery, new Object[]{hotelId},
-                (rs, rowNum) -> {
-                    HotelImagesDto hotelImagesDto = new HotelImagesDto();
-                    hotelImagesDto.setId(rs.getInt("id"));
-                    hotelImagesDto.setImage(rs.getBytes("image"));
-                    hotelImagesDto.setDescription(rs.getString("description"));
-                    hotelImagesDto.setHotel_id(rs.getInt("hotel_id"));
-                    return hotelImagesDto;
-                });
     }
 
-    private HotelServicesDto getHotelServicesByHotelId(int hotelId) {
-        String servicesQuery = "SELECT hotel_id, views, entertainment, parking, washing_machine, " +
-                "swimming, wifi, bar, breakfast, fitness_centre, restaurant, room_services " +
-                "FROM hotel_services " +
-                "WHERE hotel_id = ?";
-
-        return jdbcTemplate.queryForObject(servicesQuery, new Object[]{hotelId},
-                (rs, rowNum) -> {
-                    HotelServicesDto hotelServicesDto = new HotelServicesDto();
-                    hotelServicesDto.setHotel_id(rs.getInt("hotel_id"));
-                    hotelServicesDto.setViews(rs.getBoolean("views"));
-                    services(rs, hotelServicesDto);
-                    hotelServicesDto.setRoom_services(rs.getBoolean("room_services"));
-                    return hotelServicesDto;
-                });
-    }
-
-    public static void services(ResultSet rs, HotelServicesDto hotelServicesDto) throws SQLException {
-        hotelServicesDto.setEntertainment(rs.getBoolean("entertainment"));
-        hotelServicesDto.setParking(rs.getBoolean("parking"));
-        hotelServicesDto.setWashing_services(rs.getBoolean("washing_machine"));
-        hotelServicesDto.setSwimming_pool(rs.getBoolean("swimming"));
-        hotelServicesDto.setWifi(rs.getBoolean("wifi"));
-        hotelServicesDto.setBar(rs.getBoolean("bar"));
-        hotelServicesDto.setBreakfast(rs.getBoolean("breakfast"));
-        hotelServicesDto.setFitness_centre(rs.getBoolean("fitness_centre"));
-        hotelServicesDto.setRestaurant(rs.getBoolean("restaurant"));
-    }
 }
