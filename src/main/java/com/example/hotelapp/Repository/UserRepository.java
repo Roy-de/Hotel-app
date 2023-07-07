@@ -1,7 +1,10 @@
 package com.example.hotelapp.Repository;
 
 import com.example.hotelapp.DTO.ChangedPassword;
-import com.example.hotelapp.DTO.User.*;
+import com.example.hotelapp.DTO.User.UserCredentials;
+import com.example.hotelapp.DTO.User.UserDetailsDto;
+import com.example.hotelapp.DTO.User.UserDto;
+import com.example.hotelapp.DTO.User.UserUpdatedDto;
 import com.example.hotelapp.ExceptionHandlers.Exception.UserNotFoundException;
 import org.springframework.stereotype.Repository;
 
@@ -20,6 +23,7 @@ public interface UserRepository {
     4. Update the details of the user. Do this by updating user record and use the email in
     the where clause
      */
+    UserDetailsDto get_user(String credentials);
     int update_user(UserUpdatedDto userUpdatedDto,String credentials);
     ChangedPassword change_password(UserDetailsDto userDetailsDto);
     /*

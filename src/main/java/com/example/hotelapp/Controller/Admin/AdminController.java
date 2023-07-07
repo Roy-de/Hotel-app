@@ -7,11 +7,11 @@ import com.example.hotelapp.DTO.Hotel.HotelImagesDto;
 import com.example.hotelapp.DTO.Hotel.HotelObject;
 import com.example.hotelapp.Service.AdminService.AdminServiceLayer;
 import com.example.hotelapp.Service.HotelService.HotelServiceLayer;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,9 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.ws.rs.NotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/admin")
@@ -68,8 +66,8 @@ public class AdminController {
 
     @PostMapping("/host")
     public ResponseEntity<String> host(
-            @RequestParam(value = "images") List<MultipartFile> images,
-            @RequestParam(value = "descriptions",required = false) List<String> descriptions,
+            @RequestParam(value = "images", required = false) List<MultipartFile> images,
+            @RequestParam(value = "descriptions", required = false) List<String> descriptions,
             @RequestParam String name,
             @RequestParam String location,
             @RequestParam String description,
@@ -83,10 +81,11 @@ public class AdminController {
         AdminDto adminDto = (AdminDto) session.getAttribute("adminDto");
         AdminDetailsDto adminDetailsDto = (AdminDetailsDto) session.getAttribute("adminDetailsDto");
         if (adminDto == null || adminDetailsDto == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Admin details or hotel information not found. Please start the signup process again.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Admin details or hotel information not found. Please start the signup process again.");
         }
         try {
-            HotelDto hotelDto =  new HotelDto();
+            HotelDto hotelDto = new HotelDto();
             hotelDto.setName(name);
             hotelDto.setLocation(location);
             hotelDto.setDescription(description);
@@ -96,9 +95,22 @@ public class AdminController {
             hotelDto.setLongitude(longitude);
             hotelDto.setLatitude(latitude);
             hotelDto.setPlace(place);
-            List<HotelImagesDto> hotelImagesDtoList = images(images,descriptions);
-            session.setAttribute("hotelImages",hotelImagesDtoList);
+
+            List<HotelImagesDto> hotelImagesDtoList = new ArrayList<>();
+
+            if (images != null && descriptions != null && images.size() == descriptions.size()) {
+                hotelImagesDtoList = images(images, descriptions);
+            } else {
+                // Handle the case where images and descriptions are null or have different sizes
+                HotelImagesDto placeholderDto = new HotelImagesDto();
+                placeholderDto.setImage(null);
+                placeholderDto.setDescription("No images available");
+                hotelImagesDtoList.add(placeholderDto);
+            }
+
+            session.setAttribute("hotelImages", hotelImagesDtoList);
             session.setAttribute("hotelDto", hotelDto);
+
             return ResponseEntity.status(HttpStatus.OK).body("Host Successful");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
@@ -173,6 +185,16 @@ public class AdminController {
     public ResponseEntity<?> dashboard(@PathVariable int id) {
         try {
             List<HotelObject> hotels = adminServiceLayer.get_all_hotels(id);
+            for(HotelObject hotelObject: hotels){
+                List<HotelImagesDto> imagesDtoList = hotelObject.getHotelImagesDto();
+                for(HotelImagesDto hotelImagesDto: imagesDtoList){
+                    byte[] image = hotelImagesDto.getImage();
+                    if(image != null){
+                        ByteArrayResource resource = new ByteArrayResource(image);
+                        return ResponseEntity.ok().contentType(MediaType.ALL).body(resource);
+                    }
+                }
+            }
             return ResponseEntity.ok(hotels);
         } catch (NotFoundException e) {
             // Return 404 Not Found if the admin or hotels are not found
@@ -196,19 +218,13 @@ public class AdminController {
     }
 
     @DeleteMapping("/delete/{hotel_id}")
-    public void delete_hotel(@PathVariable int hotel_id, HttpServletResponse response) throws IOException {
-        JsonMapper mapper =new JsonMapper();
-        Map<String, String> map= new HashMap<>();
+    public ResponseEntity<String> delete_hotel(@PathVariable int hotel_id){
         try{
-            adminServiceLayer.delete_hotel(hotel_id);
-            map.put("response", "success");
-            response.setContentType("application/json");
-            mapper.writeValue(response.getOutputStream(),map);
+            String result = adminServiceLayer.delete_hotel(hotel_id);
+            return ResponseEntity.ok(result);
 
         }catch (Exception e){
-            map.put("response", String.valueOf(e));
-            response.setContentType("application/json");
-            mapper.writeValue(response.getOutputStream(),map);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting hotel");
         }
     }
 }

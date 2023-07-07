@@ -5,6 +5,7 @@ import com.example.hotelapp.DTO.User.UserCredentials;
 import com.example.hotelapp.DTO.User.UserDetailsDto;
 import com.example.hotelapp.DTO.User.UserDto;
 import com.example.hotelapp.DTO.User.UserUpdatedDto;
+import com.example.hotelapp.Mappers.UserDetailsMapper;
 import com.example.hotelapp.Mappers.userRowMapper;
 import com.example.hotelapp.Repository.UserRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -40,6 +41,12 @@ public class UserRepositoryImpl implements UserRepository{
     public UserCredentials get_user_credentials(String credentials) {
         String sql = "SELECT user_email,user_password,user_username FROM public.get_user_credentials(?)";
         return jdbcTemplate.queryForObject(sql,new userRowMapper(),credentials);
+    }
+
+    @Override
+    public UserDetailsDto get_user(String credentials) {
+        String sql = "SELECT * FROM public.user_details WHERE user_details.user_account_id IN (SELECT id FROM public.user_account WHERE user_account.username = ? OR user_account.email = ?)";
+        return jdbcTemplate.queryForObject(sql,new UserDetailsMapper(),credentials,credentials);
     }
 
     @Override

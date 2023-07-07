@@ -1,6 +1,9 @@
 package com.example.hotelapp.Service.UserService;
 
-import com.example.hotelapp.DTO.User.*;
+import com.example.hotelapp.DTO.User.UserCredentials;
+import com.example.hotelapp.DTO.User.UserDetailsDto;
+import com.example.hotelapp.DTO.User.UserDto;
+import com.example.hotelapp.DTO.User.UserUpdatedDto;
 import com.example.hotelapp.Repository.impl.UserRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,10 +31,12 @@ public class UserServiceLayer {
     public UserCredentials get_user_credentials(String credentials){
        return userRepository.get_user_credentials(credentials);
     }
-/*    public void update_details(String credentials){
+    public UserDetailsDto get_user(String credentials){
+        return userRepository.get_user(credentials);
+    }
+    public void update_details(UserUpdatedDto userUpdatedDto,String credentials){
         //Get user credentials
-        get_user_credentials(credentials);
-        userRepository.update_user()
+        userRepository.update_user(userUpdatedDto,credentials);
 
-    }*/
+    }
 }

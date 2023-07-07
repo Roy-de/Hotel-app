@@ -20,8 +20,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         return http.csrf(AbstractHttpConfigurer::disable).
-                authorizeHttpRequests(requests -> requests.requestMatchers("/user/**").
-                        hasRole("USER").anyRequest().permitAll()).build();
+                authorizeHttpRequests(requests -> requests.anyRequest().permitAll()).build();
     }
     private PasswordEncoder encoder(){
         return  new BCryptPasswordEncoder();

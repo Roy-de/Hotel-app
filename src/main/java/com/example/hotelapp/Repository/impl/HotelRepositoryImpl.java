@@ -66,8 +66,10 @@ public class HotelRepositoryImpl implements HotelRepository {
         for(int i = 0; i < images.size(); i++){
             byte[] image = images.get(i);
             String description = descriptions.get(i);
-            Object[] args = {image,description,Hotel_id};
-            batchArgs.add(args);
+            if (image != null) {
+                Object[] args = {image, description, Hotel_id};
+                batchArgs.add(args);
+            }
         }
         jdbcTemplate.batchUpdate(sql,batchArgs);
     }
