@@ -19,11 +19,12 @@ public interface HotelRepository {
     ---------------- EDIT HOTEL -----------
      */
     //Edit hotel services
-    void edit_hotel_services(HotelServicesDto hotelServicesDto);
+    void edit_hotel_services(HotelServicesDto hotelServicesDto,int hotel_id);
     //Edit hotel images
-    void edit_hotel_images(HotelImagesDto hotelImagesDto);
+    void edit_hotel_images(List<HotelImagesDto> hotelImagesDto,int hotel_id);
     //edit hotel details
-    void edit_hotel_details(HotelDto hotelDto);
+    void edit_hotel_details(HotelDto hotelDto,int hotel_id);
+    void delete_image(List<Integer> id);
     /*
     ---------------VIEW HOTELS--------------
      */

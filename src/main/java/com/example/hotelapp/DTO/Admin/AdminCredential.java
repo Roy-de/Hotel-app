@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdminCredential {
+    private int id;
     private String admin_username;
     private String admin_password;
     private String admin_email;

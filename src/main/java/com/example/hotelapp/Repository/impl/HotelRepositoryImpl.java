@@ -75,17 +75,50 @@ public class HotelRepositoryImpl implements HotelRepository {
     }
 
     @Override
-    public void edit_hotel_services(HotelServicesDto hotelServicesDto) {
+    public void edit_hotel_services(HotelServicesDto hotelServicesDto,int hotel_id) {
+        String sql = "UPDATE public.hotel_services SET views = ?,entertainment = ?,parking = ?,washing_machine = ?,swimming = ?,wifi = ?,bar = ?,breakfast = ?,fitness_centre = ?,restaurant = ?,room_services = ? WHERE hotel_id = ?";
+        jdbcTemplate.update(con -> {PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setBoolean(1,hotelServicesDto.isViews());
+        ps.setBoolean(2,hotelServicesDto.isEntertainment());
+            ps.setBoolean(3,hotelServicesDto.isParking());
+            ps.setBoolean(4,hotelServicesDto.isWashing_services());
+            ps.setBoolean(5,hotelServicesDto.isSwimming_pool());
+            ps.setBoolean(6,hotelServicesDto.isWifi());
+            ps.setBoolean(7,hotelServicesDto.isBar());
+            ps.setBoolean(8,hotelServicesDto.isBreakfast());
+            ps.setBoolean(9,hotelServicesDto.isFitness_centre());
+            ps.setBoolean(10,hotelServicesDto.isRestaurant());
+            ps.setBoolean(11,hotelServicesDto.isRoom_services());
+            ps.setInt(12,hotel_id);
+            return ps;
+        } );
+    }
+
+    @Override
+    public void edit_hotel_images(List<HotelImagesDto> hotelImagesDto,int hotel_id) {
 
     }
 
     @Override
-    public void edit_hotel_images(HotelImagesDto hotelImagesDto) {
-
+    public void edit_hotel_details(HotelDto hotelDto,int id) {
+        String sql =  "UPDATE public.hotel SET name = ?,location = ?,description = ?,pricing = ?,no_of_beds = ?,no_of_rooms = ?,longitude = ?,latitude = ?,place = ? WHERE id = ?";
+        jdbcTemplate.update(con -> {
+            PreparedStatement ps = con.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1,hotelDto.getName());
+            ps.setString(2,hotelDto.getLocation());
+            ps.setString(3,hotelDto.getDescription());
+            ps.setDouble(4,hotelDto.getPricing());
+            ps.setInt(5,hotelDto.getNo_of_beds());
+            ps.setInt(6,hotelDto.getRooms_available());
+            ps.setDouble(7,hotelDto.getLongitude());
+            ps.setDouble(8,hotelDto.getLatitude());
+            ps.setString(9,hotelDto.getPlace());
+            return ps;
+        });
     }
 
     @Override
-    public void edit_hotel_details(HotelDto hotelDto) {
+    public void delete_image(List<Integer> id) {
 
     }
 

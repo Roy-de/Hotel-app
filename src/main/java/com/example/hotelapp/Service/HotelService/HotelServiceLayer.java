@@ -49,4 +49,10 @@ public class HotelServiceLayer {
         //associate hotel images to hotel
         insert_image(id,hotelImagesDtoList);
     }
+    public void update_service(HotelServicesDto hotelServicesDto, int hotel_id){
+        hotelRepository.edit_hotel_services(hotelServicesDto,hotel_id);
+    }
+    public void update_hotel_detail(HotelDto hotelDto,int hotel_id){
+        hotelRepository.edit_hotel_details(hotelDto,hotel_id);
+    }
 }

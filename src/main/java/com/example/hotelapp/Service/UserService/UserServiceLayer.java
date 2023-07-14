@@ -1,6 +1,5 @@
 package com.example.hotelapp.Service.UserService;
 
-import com.example.hotelapp.DTO.User.UserCredentials;
 import com.example.hotelapp.DTO.User.UserDetailsDto;
 import com.example.hotelapp.DTO.User.UserDto;
 import com.example.hotelapp.DTO.User.UserUpdatedDto;
@@ -28,8 +27,8 @@ public class UserServiceLayer {
     public void create_user_account(UserDto userDto){
         userRepository.create_user_account(userDto);
     }
-    public UserCredentials get_user_credentials(String credentials){
-       return userRepository.get_user_credentials(credentials);
+    public void get_user_credentials(String credentials){
+        userRepository.get_user_credentials(credentials);
     }
     public UserDetailsDto get_user(String credentials){
         return userRepository.get_user(credentials);
@@ -38,5 +37,8 @@ public class UserServiceLayer {
         //Get user credentials
         userRepository.update_user(userUpdatedDto,credentials);
 
+    }
+    public void inactivate_account(){
+        //userRepository.delete_user();
     }
 }

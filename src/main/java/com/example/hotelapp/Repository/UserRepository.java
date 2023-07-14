@@ -24,7 +24,7 @@ public interface UserRepository {
     the where clause
      */
     UserDetailsDto get_user(String credentials);
-    int update_user(UserUpdatedDto userUpdatedDto,String credentials);
+    void update_user(UserUpdatedDto userUpdatedDto, String credentials);
     ChangedPassword change_password(UserDetailsDto userDetailsDto);
     /*
     The final method is the user should be able to delete his/ her account

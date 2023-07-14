@@ -50,7 +50,7 @@ public class UserRepositoryImpl implements UserRepository{
     }
 
     @Override
-    public int update_user(UserUpdatedDto userUpdatedDto, String credentials) {
+    public void update_user(UserUpdatedDto userUpdatedDto, String credentials) {
         String sql = "UPDATE public.user_details SET first_name = ?,last_name = ?,phone_no = ? where username = ? or email = ?";
         Object[] params = {
                 userUpdatedDto.getFirst_name(),
@@ -60,7 +60,7 @@ public class UserRepositoryImpl implements UserRepository{
                 credentials
         };
 
-        return jdbcTemplate.update(sql,params);
+        jdbcTemplate.update(sql, params);
     }
 
     @Override

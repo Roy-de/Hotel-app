@@ -17,4 +17,9 @@ public class BookingDto {
     private DateFormat checkin;
     @DateTimeFormat
     private DateFormat checkout;
+    private int rooms;
+    private int adults;
+    private int children;
+    private DateFormat order_time;
+    private int hotel_id;
 }

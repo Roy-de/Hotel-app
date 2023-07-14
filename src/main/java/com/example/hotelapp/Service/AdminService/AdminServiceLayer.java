@@ -47,8 +47,8 @@ public class AdminServiceLayer {
     public boolean isAdminExist(String credentials){
         return adminRepository.search_for_username(credentials);
     }
-    public List<HotelObject> get_all_hotels(int hotel_id){
-        return adminRepository.get_all_hotels(hotel_id);
+    public List<HotelObject> get_all_hotels(int admin_id){
+        return adminRepository.get_all_hotels(admin_id);
     }
     public String delete_hotel(int id){
         return adminRepository.delete_hotel(id);
