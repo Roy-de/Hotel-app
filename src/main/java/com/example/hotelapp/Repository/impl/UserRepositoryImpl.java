@@ -38,9 +38,9 @@ public class UserRepositoryImpl implements UserRepository{
     }
 
     @Override
-    public UserCredentials get_user_credentials(String credentials) {
+    public void get_user_credentials(String credentials) {
         String sql = "SELECT user_email,user_password,user_username FROM public.get_user_credentials(?)";
-        return jdbcTemplate.queryForObject(sql,new userRowMapper(),credentials);
+        jdbcTemplate.queryForObject(sql, new userRowMapper(), credentials);
     }
 
     @Override

@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.NotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -195,8 +194,7 @@ public class AdminController {
         }
     }
     @GetMapping("/hello")
-    @RolesAllowed("ADMIN")
     public String hello(){
-        return "This is secured";
+        return "This is secured admin";
     }
 }

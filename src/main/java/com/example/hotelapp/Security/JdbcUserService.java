@@ -3,15 +3,12 @@ package com.example.hotelapp.Security;
 import com.example.hotelapp.DTO.User.UserCredentials;
 import com.example.hotelapp.Mappers.userRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 @Service
 public class JdbcUserService implements UserDetailsService {
     private final JdbcTemplate jdbcTemplate;
@@ -26,17 +23,11 @@ public class JdbcUserService implements UserDetailsService {
         if(user == null){
             throw new UsernameNotFoundException("Account does not exist");
         }
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("USER"));
-        return new org.springframework.security.core.userdetails.User(
-                user.getUser_username(),
-                user.getUser_password(),
-                authorities
-        );
+        return User.withUsername(user.getUser_username()).password(user.getUser_password()).authorities("USER").build();
     }
     private UserCredentials get_user_credentials(String credentials){
-        String sql = "SELECT username,email,password FROM public.admin_acc WHERE username = ? OR email = ?";
+        String sql = "SELECT id,username,email,password FROM public.user_account WHERE username = ? OR email = ?";
 
-        return jdbcTemplate.queryForObject(sql,new userRowMapper(),credentials);
+        return jdbcTemplate.queryForObject(sql,new userRowMapper(),credentials,credentials);
     }
 }

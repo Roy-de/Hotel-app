@@ -1,5 +1,6 @@
 package com.example.hotelapp.Controller.Login;
 
+import com.example.hotelapp.Config.CustomAuthenticationManager;
 import com.example.hotelapp.DTO.Admin.AdminCredential;
 import com.example.hotelapp.DTO.Admin.AdminDetailsDto;
 import com.example.hotelapp.DTO.Admin.AdminDto;
@@ -12,6 +13,9 @@ import com.example.hotelapp.Service.UserService.UserServiceLayer;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,22 +26,33 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/login")
-@CrossOrigin(origins = {"*"},allowedHeaders = {"*"},methods = {RequestMethod.DELETE,RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT},originPatterns = {"*"})
 public class LoginController {
+    private final CustomAuthenticationManager authenticationManager;
     /**
      * This part we will put all the necessary classes that we will use
      */
     private final UserServiceLayer userServiceLayer;
     private final AdminServiceLayer adminServiceLayer;
 
-    public LoginController(UserServiceLayer userServiceLayer, AdminServiceLayer adminServiceLayer) {
+    public LoginController(CustomAuthenticationManager authenticationManager, UserServiceLayer userServiceLayer, AdminServiceLayer adminServiceLayer) {
+        this.authenticationManager = authenticationManager;
         this.userServiceLayer = userServiceLayer;
         this.adminServiceLayer = adminServiceLayer;
     }
 
     @PostMapping("/admin")
     public ResponseEntity<?> admin_login(@RequestBody AdminCredential adminCredential) {
-       return null;
+       try{
+           Authentication authentication = authenticationManager.authenticate(
+                   new UsernamePasswordAuthenticationToken(adminCredential.getAdmin_username(),adminCredential.getAdmin_password())
+           );
+           System.out.println(authentication.getDetails());
+           return ResponseEntity.ok("Successfully authenticated "+ authentication.getName());
+       }catch (UsernameNotFoundException e){
+           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+       }catch (Exception e){
+           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error "+e);
+       }
     }
     @PostMapping("/user")
     public ResponseEntity<?>user_login(@RequestBody UserCredentials credentials){
@@ -47,7 +62,7 @@ public class LoginController {
     /**
      * This part is used to create user accounts
      * @param user
-     * The <code>create_user()</code> Takes in User details i.e username, full name
+     * The <code>create_user()</code> Takes in User details i.e. username, full name
      * ,email and password into the data transfer object called <code>UserDto</code>
      * @return String "Account created successfully"
      */
@@ -81,6 +96,14 @@ public class LoginController {
         return ResponseEntity.status(HttpStatus.OK).body("Create Account Successful");
     }
 
+    /**Get the administrator of the hotel details
+     *
+     * @param adminDetailsDto get the details of admin. that is the
+     *                        1. First and last name
+     *                        2. Phone number (primary)
+     *                        3. Alternative phone number and email (Optional)
+     * @param session   just store the data in a session to be used later
+     */
     @PostMapping("/add_details")
     public ResponseEntity<String> addDetails(@RequestBody AdminDetailsDto adminDetailsDto, HttpSession session) {
         AdminDto adminDto = (AdminDto) session.getAttribute("adminDto");
@@ -95,6 +118,22 @@ public class LoginController {
         }
     }
 
+    /**This is where it gets complicated. An admin can decide not to add images
+     * as he is hosting his/her hotel.So we will get each detail as a request parameter
+     *
+     * @param images    images of the hotel
+     * @param descriptions  description about the images (Optional)
+     * @param name  name of the hotel
+     * @param location  Where is the hotel located (County)
+     * @param description   About the hotel
+     * @param pricing   pricing per room assuming all rooms are identical
+     * @param no_of_beds    number of beds per room
+     * @param rooms_available   number of rooms in total in the hotel
+     * @param longitude   where is the hotel located on the map
+     * @param latitude   where is the hotel located on the map
+     * @param place Region within the county
+     * @param session   same as other sessions
+     */
     @PostMapping("/host")
     public ResponseEntity<String> host(
             @RequestParam(value = "images", required = false) List<MultipartFile> images,
@@ -148,6 +187,11 @@ public class LoginController {
         }
     }
 
+    /**This part is just a button to complete the registration
+     *
+     * @param session gets all other sessions and create the hotel account plus the administrator
+     * @return  <code>String</code> - account created successfully
+     */
     @PostMapping("/Final_step")
     public ResponseEntity<?> finalStep(HttpSession session) {
         AdminDto adminDto = (AdminDto) session.getAttribute("adminDto");

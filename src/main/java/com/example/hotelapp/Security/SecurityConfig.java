@@ -1,11 +1,13 @@
 package com.example.hotelapp.Security;
 
+import com.example.hotelapp.Config.CustomAuthenticationManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -16,19 +18,21 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
-
+@Slf4j
+public class SecurityConfig{
     private final JdbcAdminService jdbcAdminService;
-    @SuppressWarnings(value = "Private field 'jdbcUserService' is assigned but never accessed")
     private final JdbcUserService jdbcUserService;
+
     @Autowired
     public SecurityConfig(JdbcAdminService jdbcAdminService, JdbcUserService jdbcUserService) {
         this.jdbcAdminService = jdbcAdminService;
         this.jdbcUserService = jdbcUserService;
     }
-
     @Bean
     public CorsConfigurationSource corsConfigurer(){
         CorsConfiguration configuration = new CorsConfiguration();
@@ -41,33 +45,36 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**",configuration);
         return source;
     }
-    @Autowired
-    public void configure(AuthenticationManagerBuilder managerBuilder){
-        managerBuilder.authenticationProvider(adminProvider());
-        // managerBuilder.userDetailsService(jdbcUserService).passwordEncoder(encoder());
-    }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        return http.cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable).
+        http.cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable).
                 authorizeHttpRequests(requests -> requests
+                        .requestMatchers("/admin/hello").hasAnyAuthority("ADMIN")
+                        .requestMatchers("/user/hello").hasAnyAuthority("USER")
+                        .requestMatchers("/user/hello").authenticated()
                         .requestMatchers("/admin/hello").authenticated()
+                        .requestMatchers("/login/**").permitAll()
                         .anyRequest().permitAll())
-                .httpBasic(Customizer.withDefaults())
-                //.addFilter(adminAuthenticationFilter())
-                .build();
+                .httpBasic(Customizer.withDefaults());
+        return http.build();
     }
-    /*@Bean
-    public AdminAuthFilter adminAuthenticationFilter() throws Exception {
-        AdminAuthFilter filter = new AdminAuthFilter();
-    }*/
-
+    @Bean
+    public CustomAuthenticationManager authenticationManager(){
+        List<AuthenticationProvider> authenticationProviders = Arrays.asList(adminProvider(),userProvider());
+        return new CustomAuthenticationManager(authenticationProviders, jdbcUserService, jdbcAdminService);
+    }
     public DaoAuthenticationProvider adminProvider(){
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(jdbcAdminService);
         authenticationProvider.setPasswordEncoder(encoder());
         return authenticationProvider;
     }
-
+    public DaoAuthenticationProvider userProvider(){
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(jdbcUserService);
+        authenticationProvider.setPasswordEncoder(encoder());
+        return authenticationProvider;
+    }
     private PasswordEncoder encoder(){
         return  new BCryptPasswordEncoder();
     }
