@@ -1,7 +1,7 @@
 package com.example.hotelapp.Security;
 
-import com.example.hotelapp.DTO.User.UserCredentials;
-import com.example.hotelapp.Mappers.userRowMapper;
+import com.example.hotelapp.DTO.CredentialsDto;
+import com.example.hotelapp.Mappers.CredentialsMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,15 +19,17 @@ public class JdbcUserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserCredentials user = get_user_credentials(username);
+        CredentialsDto user = get_user_credentials(username);
         if(user == null){
             throw new UsernameNotFoundException("Account does not exist");
         }
-        return User.withUsername(user.getUser_username()).password(user.getUser_password()).authorities("USER").build();
+        return User.withUsername(user.getUsername())
+                .password(user.getPassword())
+                .authorities("USER").build();
     }
-    private UserCredentials get_user_credentials(String credentials){
+    private CredentialsDto get_user_credentials(String credentials){
         String sql = "SELECT id,username,email,password FROM public.user_account WHERE username = ? OR email = ?";
 
-        return jdbcTemplate.queryForObject(sql,new userRowMapper(),credentials,credentials);
+        return jdbcTemplate.queryForObject(sql,new CredentialsMapper(),credentials,credentials);
     }
 }

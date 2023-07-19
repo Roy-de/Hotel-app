@@ -1,19 +1,24 @@
 package com.example.hotelapp.Controller.Login;
 
 import com.example.hotelapp.Config.CustomAuthenticationManager;
-import com.example.hotelapp.DTO.Admin.AdminCredential;
 import com.example.hotelapp.DTO.Admin.AdminDetailsDto;
 import com.example.hotelapp.DTO.Admin.AdminDto;
+import com.example.hotelapp.DTO.CredentialsDto;
 import com.example.hotelapp.DTO.Hotel.HotelDto;
 import com.example.hotelapp.DTO.Hotel.HotelImagesDto;
-import com.example.hotelapp.DTO.User.UserCredentials;
 import com.example.hotelapp.DTO.User.UserDto;
 import com.example.hotelapp.Service.AdminService.AdminServiceLayer;
+import com.example.hotelapp.Service.ConvertEmailToUsername;
+import com.example.hotelapp.Service.Jwt.JwtService;
 import com.example.hotelapp.Service.UserService.UserServiceLayer;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.dao.EmptyResultDataAccessException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -26,36 +31,54 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/login")
+@Slf4j
 public class LoginController {
+    private final ConvertEmailToUsername convertEmailToUsername;
     private final CustomAuthenticationManager authenticationManager;
     /**
      * This part we will put all the necessary classes that we will use
      */
     private final UserServiceLayer userServiceLayer;
     private final AdminServiceLayer adminServiceLayer;
-
-    public LoginController(CustomAuthenticationManager authenticationManager, UserServiceLayer userServiceLayer, AdminServiceLayer adminServiceLayer) {
+    private final JwtService jwtService;
+    @Autowired
+    public LoginController(ConvertEmailToUsername convertEmailToUsername, CustomAuthenticationManager authenticationManager, UserServiceLayer userServiceLayer, AdminServiceLayer adminServiceLayer, JwtService jwtService) {
+        this.convertEmailToUsername = convertEmailToUsername;
         this.authenticationManager = authenticationManager;
         this.userServiceLayer = userServiceLayer;
         this.adminServiceLayer = adminServiceLayer;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/admin")
-    public ResponseEntity<?> admin_login(@RequestBody AdminCredential adminCredential) {
+    public ResponseEntity<?> admin_login(@RequestBody CredentialsDto credentials) {
        try{
            Authentication authentication = authenticationManager.authenticate(
-                   new UsernamePasswordAuthenticationToken(adminCredential.getAdmin_username(),adminCredential.getAdmin_password())
+                   new UsernamePasswordAuthenticationToken(credentials.getUsername(),credentials.getPassword())
            );
-           return ResponseEntity.ok("Successfully authenticated "+ authentication.getName());
-       }catch (EmptyResultDataAccessException e){
+            String username = convertEmailToUsername.adminEmail(credentials.getUsername());
+           log.info("Authenticating: "+authentication.getCredentials());
+           return ResponseEntity.ok("Successfully authenticated "+ authentication.getName()+"Token: "+jwtService.generateToken(username));
+       }catch (InternalAuthenticationServiceException e){
            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
-       }catch (Exception e){
-           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error "+e);
+       }catch (BadCredentialsException e){
+           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bad credentials");
        }
     }
     @PostMapping("/user")
-    public ResponseEntity<?>user_login(@RequestBody UserCredentials credentials){
-        return null;
+    public ResponseEntity<?>user_login(@RequestBody CredentialsDto credentials){
+        try{
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(credentials.getUsername(),credentials.getPassword())
+            );
+            String username = convertEmailToUsername.userEmail(credentials.getUsername());
+            log.info("Authenticating: "+authentication.getCredentials());
+            return ResponseEntity.ok("Successfully authenticated "+ authentication.getName()+"Token: "+jwtService.generateToken(username));
+        }catch (InternalAuthenticationServiceException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+        }catch (BadCredentialsException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bad credentials");
+        }
     }
 
     /**
@@ -69,11 +92,10 @@ public class LoginController {
     public ResponseEntity<String> create_user(@RequestBody @Validated UserDto user){
         try{
             userServiceLayer.create_user_account(user);
-            ResponseEntity.status(HttpStatus.CREATED).body("Account created");
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Could not create account: "+e);
+           return ResponseEntity.status(HttpStatus.CREATED).body("Account created");
+        }catch (DuplicateKeyException e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Could not create account: Username is already taken" + e);
         }
-        return ResponseEntity.status(HttpStatus.OK).body("Account created");
     }
 
     /**Here we will perform a multistep procedure in order to register a new hotel administrator
@@ -191,7 +213,7 @@ public class LoginController {
      * @param session gets all other sessions and create the hotel account plus the administrator
      * @return  <code>String</code> - account created successfully
      */
-    @PostMapping("/Final_step")
+    @PostMapping("/final_step")
     public ResponseEntity<?> finalStep(HttpSession session) {
         AdminDto adminDto = (AdminDto) session.getAttribute("adminDto");
         AdminDetailsDto adminDetailsDto = (AdminDetailsDto) session.getAttribute("adminDetailsDto");

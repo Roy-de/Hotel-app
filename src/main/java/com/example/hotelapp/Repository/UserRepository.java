@@ -4,7 +4,6 @@ import com.example.hotelapp.DTO.ChangedPassword;
 import com.example.hotelapp.DTO.User.UserDetailsDto;
 import com.example.hotelapp.DTO.User.UserDto;
 import com.example.hotelapp.DTO.User.UserUpdatedDto;
-import com.example.hotelapp.ExceptionHandlers.Exception.UserNotFoundException;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -12,7 +11,6 @@ public interface UserRepository {
     //Method to create a user account
     void create_user_account(UserDto userDto);
     //Method to get user credentials.User should not see this
-    void get_user_credentials(String credentials) throws UserNotFoundException;
     /**Method to update user details
      The user should be able to change password and other details
     *---------------HOW IT WORKS------------------

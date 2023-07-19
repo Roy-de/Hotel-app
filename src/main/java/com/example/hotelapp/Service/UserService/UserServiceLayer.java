@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceLayer {
     private final UserRepositoryImpl userRepository;
-    private UserDetailsDto userDetailsDto;
     @Autowired
     public UserServiceLayer(UserRepositoryImpl userRepository) {
         this.userRepository = userRepository;
@@ -28,9 +27,7 @@ public class UserServiceLayer {
     public void create_user_account(UserDto userDto){
         userRepository.create_user_account(userDto);
     }
-    public void get_user_credentials(String credentials){
-        userRepository.get_user_credentials(credentials);
-    }
+
     public UserDetailsDto get_user(String credentials){
         return userRepository.get_user(credentials);
     }

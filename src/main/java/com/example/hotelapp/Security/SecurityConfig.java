@@ -1,6 +1,7 @@
 package com.example.hotelapp.Security;
 
 import com.example.hotelapp.Config.CustomAuthenticationManager;
+import com.example.hotelapp.Config.JwtAuthFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -11,9 +12,11 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -25,11 +28,13 @@ import java.util.List;
 @EnableWebSecurity
 @Slf4j
 public class SecurityConfig{
+    private final JwtAuthFilter jwtAuthFilter;
     private final JdbcAdminService jdbcAdminService;
     private final JdbcUserService jdbcUserService;
 
     @Autowired
-    public SecurityConfig(JdbcAdminService jdbcAdminService, JdbcUserService jdbcUserService) {
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter, JdbcAdminService jdbcAdminService, JdbcUserService jdbcUserService) {
+        this.jwtAuthFilter = jwtAuthFilter;
         this.jdbcAdminService = jdbcAdminService;
         this.jdbcUserService = jdbcUserService;
     }
@@ -54,9 +59,13 @@ public class SecurityConfig{
                         .requestMatchers("/login/**").permitAll()
                         .requestMatchers("/hotel/**").permitAll()
                         .anyRequest().authenticated())
+                .sessionManagement((session)->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationManager(authenticationManager())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(Customizer.withDefaults());
         return http.build();
     }
+
     @Bean
     public CustomAuthenticationManager authenticationManager(){
         List<AuthenticationProvider> authenticationProviders = Arrays.asList(adminProvider(),userProvider());

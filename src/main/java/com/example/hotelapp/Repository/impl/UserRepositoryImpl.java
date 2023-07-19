@@ -6,7 +6,6 @@ import com.example.hotelapp.DTO.User.UserDetailsDto;
 import com.example.hotelapp.DTO.User.UserDto;
 import com.example.hotelapp.DTO.User.UserUpdatedDto;
 import com.example.hotelapp.Mappers.UserDetailsMapper;
-import com.example.hotelapp.Mappers.userRowMapper;
 import com.example.hotelapp.Repository.UserRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,12 +34,6 @@ public class UserRepositoryImpl implements UserRepository{
                 userDto.getEmail(),
                 userDto.getUsername()};
         jdbcTemplate.update(sql,params);
-    }
-
-    @Override
-    public void get_user_credentials(String credentials) {
-        String sql = "SELECT user_email,user_password,user_username FROM public.get_user_credentials(?)";
-        jdbcTemplate.queryForObject(sql, new userRowMapper(), credentials);
     }
 
     @Override

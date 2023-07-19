@@ -1,7 +1,7 @@
 package com.example.hotelapp.Security;
 
-import com.example.hotelapp.DTO.Admin.AdminCredential;
-import com.example.hotelapp.Mappers.AdminCredentialsMapper;
+import com.example.hotelapp.DTO.CredentialsDto;
+import com.example.hotelapp.Mappers.CredentialsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.userdetails.User;
@@ -22,17 +22,17 @@ public class JdbcAdminService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AdminCredential admin = get_admin_credentials(username);
+        CredentialsDto admin = get_admin_credentials(username);
         if(admin == null){
             throw new UsernameNotFoundException("Account with "+ username +" not exist");
         }else{
-            return User.withUsername(admin.getAdmin_username()).password(admin.getAdmin_password())
+            return User.withUsername(admin.getUsername()).password(admin.getPassword())
                     .authorities("ADMIN").build();
         }
     }
-    private AdminCredential get_admin_credentials(String credentials){
+    private CredentialsDto get_admin_credentials(String credentials){
         String sql = "SELECT id,username,email,password FROM public.admin_acc WHERE username = ? OR email = ?";
 
-        return jdbcTemplate.queryForObject(sql,new AdminCredentialsMapper(),credentials,credentials);
+        return jdbcTemplate.queryForObject(sql,new CredentialsMapper(),credentials,credentials);
     }
 }
