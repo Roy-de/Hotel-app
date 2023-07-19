@@ -49,26 +49,27 @@ public class SecurityConfig{
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable).
                 authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/admin/hello").hasAnyAuthority("ADMIN")
-                        .requestMatchers("/user/hello").hasAnyAuthority("USER")
-                        .requestMatchers("/user/hello").authenticated()
-                        .requestMatchers("/admin/hello").authenticated()
+                        .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
+                        .requestMatchers("/user/**").hasAnyAuthority("USER")
                         .requestMatchers("/login/**").permitAll()
-                        .anyRequest().permitAll())
+                        .requestMatchers("/hotel/**").permitAll()
+                        .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults());
         return http.build();
     }
     @Bean
     public CustomAuthenticationManager authenticationManager(){
         List<AuthenticationProvider> authenticationProviders = Arrays.asList(adminProvider(),userProvider());
-        return new CustomAuthenticationManager(authenticationProviders, jdbcUserService, jdbcAdminService);
+        return new CustomAuthenticationManager(authenticationProviders,adminProvider(),userProvider());
     }
+    @Bean
     public DaoAuthenticationProvider adminProvider(){
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(jdbcAdminService);
         authenticationProvider.setPasswordEncoder(encoder());
         return authenticationProvider;
     }
+    @Bean
     public DaoAuthenticationProvider userProvider(){
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(jdbcUserService);

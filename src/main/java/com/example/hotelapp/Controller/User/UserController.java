@@ -1,6 +1,5 @@
 package com.example.hotelapp.Controller.User;
 
-import com.example.hotelapp.DTO.User.UserCredentials;
 import com.example.hotelapp.DTO.User.UserDetailsDto;
 import com.example.hotelapp.DTO.User.UserUpdatedDto;
 import com.example.hotelapp.Service.UserService.UserServiceLayer;
@@ -23,22 +22,6 @@ public class UserController {
     }
     //Post mapping to post user details when creating an account
 
-    @GetMapping("/login")
-    public ResponseEntity<?> get_user_credentials(@RequestBody UserCredentials userCredentials) {
-        try{
-            String credentials;
-            if(userCredentials.getUser_email() == null)
-                credentials = userCredentials.getUser_username();
-            else
-                credentials = userCredentials.getUser_email();
-            userServiceLayer.get_user_credentials(credentials);
-            return ResponseEntity.ok("Done");
-        }
-        catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error:" + e);
-        }
-
-    }
     @GetMapping("/get_details/{credentials}")
     public ResponseEntity<?> get_user(@PathVariable String credentials, HttpSession session){
         //Gets user details and returns them
