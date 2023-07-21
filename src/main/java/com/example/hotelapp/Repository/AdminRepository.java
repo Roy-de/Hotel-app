@@ -13,11 +13,10 @@ import java.util.List;
 public interface AdminRepository {
     //Method to create admin account
     void create_account(AdminDto adminDto, AdminDetailsDto adminDetailsDto, HotelDto hotelDto, List<HotelImagesDto> hotelImagesDtoList);
-    //method to get admin details
-    AdminDto get_Admin_credentials(String credential);
-    //Method to update hotel details
     //method to search for username and or email
     boolean search_for_username(String credentials);
-    List<HotelObject> get_all_hotels(int admin_id);
+    List<HotelObject> get_all_hotels(String username);
     String delete_hotel(int id);
+    String edit_Details(AdminDetailsDto adminDetailsDto,String username);
+    Integer get_admin_id(String username);
 }

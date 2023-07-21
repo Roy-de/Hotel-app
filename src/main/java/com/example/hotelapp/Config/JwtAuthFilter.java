@@ -22,10 +22,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final DelegatingUserDetailsService userDetailsService;
+    private final ThreadLocal<String> currentUsername = new ThreadLocal<>();
 
     public JwtAuthFilter(JwtService jwtService, DelegatingUserDetailsService userDetailsService) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
+    }
+    public String getUsername(){
+        return currentUsername.get();
     }
 
     @Override
@@ -43,13 +47,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
             log.info("Loading username from delegating user service plus roles");
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            log.info("Got user details: {}",userDetails.getUsername());
-            log.info("Authorities: {}",userDetails.getAuthorities());
             if(jwtService.validateToken(token,userDetails)){
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
-                log.info("Auth token: {}",authToken.getCredentials());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+                currentUsername.set(username);
                 log.info("Successfully created and set authentication for user: {}",userDetails.getUsername());
             }
         }

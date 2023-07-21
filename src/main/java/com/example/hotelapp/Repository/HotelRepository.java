@@ -12,7 +12,7 @@ import java.util.List;
 public interface HotelRepository {
     //---------CREATE HOTEL---------------
     //Create hotel
-    int create_hotel(HotelDto hotelDto,HotelServicesDto hotelServicesDto);
+    int create_hotel(int admin_id,HotelDto hotelDto,HotelServicesDto hotelServicesDto);
     //----------INSERT IMAGES -------------
     void insert_images(List<byte[]> images, List<String> descriptions,int Hotel_id);
     /*
@@ -24,7 +24,7 @@ public interface HotelRepository {
     void edit_hotel_images(List<HotelImagesDto> hotelImagesDto,int hotel_id);
     //edit hotel details
     void edit_hotel_details(HotelDto hotelDto,int hotel_id);
-    void delete_image(List<Integer> id);
+    void delete_image(List<Integer> ids);
     /*
     ---------------VIEW HOTELS--------------
      */

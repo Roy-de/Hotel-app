@@ -1,26 +1,25 @@
 package com.example.hotelapp.Repository.impl;
 
-import com.example.hotelapp.DTO.Admin.AdminDto;
 import com.example.hotelapp.DTO.Hotel.HotelDto;
 import com.example.hotelapp.DTO.Hotel.HotelImagesDto;
 import com.example.hotelapp.DTO.Hotel.HotelObject;
 import com.example.hotelapp.DTO.Hotel.HotelServicesDto;
 import com.example.hotelapp.Mappers.HotelObjectMapper;
 import com.example.hotelapp.Repository.HotelRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Repository
+@Slf4j
 public class HotelRepositoryImpl implements HotelRepository {
-    AdminDto adminDto;
     private final JdbcTemplate jdbcTemplate;
 
     public HotelRepositoryImpl(JdbcTemplate jdbcTemplate) {
@@ -28,35 +27,41 @@ public class HotelRepositoryImpl implements HotelRepository {
     }
 
     @Override
-    public int create_hotel(HotelDto hotelDto,HotelServicesDto hotelServicesDto) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(con -> {
-            PreparedStatement ps = con.prepareStatement("CALL public.create_hotel(" +
-                    "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-            ps.setLong(1, adminDto.getId());
-            ps.setString(2, hotelDto.getName());
-            ps.setString(3, hotelDto.getLocation());
-            ps.setString(4, hotelDto.getDescription());
-            ps.setDouble(5, hotelDto.getPricing());
-            ps.setLong(6, hotelDto.getNo_of_beds());
-            ps.setLong(7, hotelDto.getRooms_available());
-            ps.setString(8, hotelDto.getPlace());
-            ps.setDouble(9, hotelDto.getLongitude());
-            ps.setDouble(10, hotelDto.getLatitude());
-            ps.setBoolean(11, hotelServicesDto.isViews());
-            ps.setBoolean(12, hotelServicesDto.isEntertainment());
-            ps.setBoolean(13, hotelServicesDto.isParking());
-            ps.setBoolean(14, hotelServicesDto.isWashing_services());
-            ps.setBoolean(15, hotelServicesDto.isSwimming_pool());
-            ps.setBoolean(16, hotelServicesDto.isWifi());
-            ps.setBoolean(17, hotelServicesDto.isBar());
-            ps.setBoolean(18, hotelServicesDto.isBreakfast());
-            ps.setBoolean(19, hotelServicesDto.isFitness_centre());
-            ps.setBoolean(20, hotelServicesDto.isRestaurant());
-            ps.setBoolean(21, hotelServicesDto.isRoom_services());
-            return ps;
-        },keyHolder);
-        return Objects.requireNonNull(keyHolder.getKey()).intValue();
+    public int create_hotel(int admin_id,HotelDto hotelDto,HotelServicesDto hotelServicesDto) {
+        String sql = "SELECT public.create_hotel(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        Object[] params = {
+                admin_id,
+                hotelDto.getName(),
+                hotelDto.getLocation(),
+                hotelDto.getDescription(),
+                hotelDto.getPricing(),
+                hotelDto.getNo_of_beds(),
+                hotelDto.getRooms_available(),
+                hotelDto.getPlace(),
+                hotelDto.getLongitude(),
+                hotelDto.getLatitude(),
+                hotelServicesDto.isViews(),
+                hotelServicesDto.isEntertainment(),
+                hotelServicesDto.isParking(),
+                hotelServicesDto.isWashing_services(),
+                hotelServicesDto.isSwimming_pool(),
+                hotelServicesDto.isWifi(),
+                hotelServicesDto.isBar(),
+                hotelServicesDto.isBreakfast(),
+                hotelServicesDto.isFitness_centre(),
+                hotelServicesDto.isRestaurant(),
+                hotelServicesDto.isRoom_services()
+        };
+        Integer hotelId = jdbcTemplate.queryForObject(sql, Integer.class, params);
+        if (hotelId != null) {
+            return hotelId;
+        } else {
+            log.error("Failed to create hotel. Hotel ID is null.");
+            // Handle the error, throw an exception, or return a default value (e.g., -1) based on your application logic
+            throw new RuntimeException("Failed to create hotel. Hotel ID is null.");
+        }
+
     }
 
     @Override
@@ -95,8 +100,24 @@ public class HotelRepositoryImpl implements HotelRepository {
     }
 
     @Override
+    @SuppressWarnings("Not annotated parameter overrides @NonNullApi parameter")
     public void edit_hotel_images(List<HotelImagesDto> hotelImagesDto,int hotel_id) {
+        String sql = "UPDATE hotel_images SET image = ?, description=? WHERE hotel_id = ?";
+        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                byte[] image = hotelImagesDto.get(i).getImage();
+                String description = hotelImagesDto.get(i).getDescription();
+                ps.setBytes(1,image);
+                ps.setString(2,description);
+                ps.setInt(3,hotel_id);
+            }
 
+            @Override
+            public int getBatchSize() {
+                return hotelImagesDto.size();
+            }
+        });
     }
 
     @Override
@@ -118,8 +139,11 @@ public class HotelRepositoryImpl implements HotelRepository {
     }
 
     @Override
-    public void delete_image(List<Integer> id) {
-
+    public void delete_image(List<Integer> ids) {
+        String sql = "DELETE FROM public.hotel_images WHERE id = ?";
+        for(int image_id: ids){
+            jdbcTemplate.update(sql,image_id);
+        }
     }
 
     @Override
@@ -142,7 +166,7 @@ public class HotelRepositoryImpl implements HotelRepository {
         if (!hotels.isEmpty()) {
             return hotels.get(0);
         } else {
-            return null; // or throw an exception indicating no hotel found
+            return null;
         }
     }
 }

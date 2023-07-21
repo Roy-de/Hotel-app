@@ -5,12 +5,15 @@ import com.example.hotelapp.DTO.Hotel.HotelImagesDto;
 import com.example.hotelapp.DTO.Hotel.HotelObject;
 import com.example.hotelapp.DTO.Hotel.HotelServicesDto;
 import com.example.hotelapp.Repository.impl.HotelRepositoryImpl;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class HotelServiceLayer {
     private final HotelRepositoryImpl hotelRepository;
 
@@ -43,9 +46,12 @@ public class HotelServiceLayer {
         }
         hotelRepository.insert_images(images,descriptions,Hotel_id);
     }
-    public void create_hotel(HotelDto hotelDto,HotelServicesDto hotelServicesDto,List<HotelImagesDto> hotelImagesDtoList){
+    public void create_hotel(int admin_id,HotelDto hotelDto,HotelServicesDto hotelServicesDto,List<HotelImagesDto> hotelImagesDtoList){
         //Create the hotel
-        int id = hotelRepository.create_hotel(hotelDto,hotelServicesDto);
+        log.info("Hotel Dto: {}",hotelDto);
+        log.info("Hotel services: {}",hotelServicesDto);
+        log.info("Hotel images: {}",hotelImagesDtoList);
+        int id = hotelRepository.create_hotel(admin_id,hotelDto,hotelServicesDto);
         //associate hotel images to hotel
         insert_image(id,hotelImagesDtoList);
     }
@@ -54,5 +60,17 @@ public class HotelServiceLayer {
     }
     public void update_hotel_detail(HotelDto hotelDto,int hotel_id){
         hotelRepository.edit_hotel_details(hotelDto,hotel_id);
+    }
+    public String update_images(List<HotelImagesDto> hotelImagesDto,int id){
+        try{
+            hotelRepository.edit_hotel_images(hotelImagesDto,id);
+            return "Success";
+        }catch (DataAccessException e){
+            return e.getMessage();
+        }
+
+    }
+    public void delete_image(List<Integer> ids){
+        hotelRepository.delete_image(ids);
     }
 }

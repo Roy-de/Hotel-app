@@ -20,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,12 +52,14 @@ public class LoginController {
     @PostMapping("/admin")
     public ResponseEntity<?> admin_login(@RequestBody CredentialsDto credentials) {
        try{
-           Authentication authentication = authenticationManager.authenticate(
-                   new UsernamePasswordAuthenticationToken(credentials.getUsername(),credentials.getPassword())
+           authenticationManager.authenticate(
+                   new UsernamePasswordAuthenticationToken(credentials.getUsername(), credentials.getPassword())
            );
             String username = convertEmailToUsername.adminEmail(credentials.getUsername());
-           log.info("Authenticating: "+authentication.getCredentials());
-           return ResponseEntity.ok("Successfully authenticated "+ authentication.getName()+"Token: "+jwtService.generateToken(username));
+           ResponseDto responseDto = new ResponseDto();
+            responseDto.setStatus(200);
+            responseDto.setMessage(jwtService.generateToken(username));
+           return ResponseEntity.ok(responseDto);
        }catch (InternalAuthenticationServiceException e){
            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
        }catch (BadCredentialsException e){
@@ -68,12 +69,14 @@ public class LoginController {
     @PostMapping("/user")
     public ResponseEntity<?>user_login(@RequestBody CredentialsDto credentials){
         try{
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(credentials.getUsername(),credentials.getPassword())
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(credentials.getUsername(), credentials.getPassword())
             );
             String username = convertEmailToUsername.userEmail(credentials.getUsername());
-            log.info("Authenticating: "+authentication.getCredentials());
-            return ResponseEntity.ok("Successfully authenticated "+ authentication.getName()+"Token: "+jwtService.generateToken(username));
+            ResponseDto responseDto = new ResponseDto();
+            responseDto.setStatus(200);
+            responseDto.setMessage(jwtService.generateToken(username));
+            return ResponseEntity.ok(responseDto);
         }catch (InternalAuthenticationServiceException e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }catch (BadCredentialsException e){
@@ -84,15 +87,15 @@ public class LoginController {
     /**
      * This part is used to create user accounts
      * @param user
-     * The <code>create_user()</code> Takes in User details i.e. username, full name
+     * The <code>create_user_account()</code> Takes in User details i.e. username, full name
      * ,email and password into the data transfer object called <code>UserDto</code>
      * @return String "Account created successfully"
      */
     @PostMapping("/create_user")
-    public ResponseEntity<String> create_user(@RequestBody @Validated UserDto user){
+    public ResponseEntity<?> create_user_account(@RequestBody @Validated UserDto user){
         try{
-            userServiceLayer.create_user_account(user);
-           return ResponseEntity.status(HttpStatus.CREATED).body("Account created");
+            ResponseDto responseDto = userServiceLayer.create_user_account(user);
+           return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
         }catch (DuplicateKeyException e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Could not create account: Username is already taken" + e);
         }
@@ -218,6 +221,7 @@ public class LoginController {
         AdminDto adminDto = (AdminDto) session.getAttribute("adminDto");
         AdminDetailsDto adminDetailsDto = (AdminDetailsDto) session.getAttribute("adminDetailsDto");
         HotelDto hotelDto = (HotelDto) session.getAttribute("hotelDto");
+        @SuppressWarnings("Unchecked cast: 'java.lang.Object' to 'java.util.List<com.example.hotelapp.DTO.Hotel.HotelImagesDto>'")
         List<HotelImagesDto> hotelImagesDtoList = (List<HotelImagesDto>) session.getAttribute("hotelImages");
 
         if (adminDto == null || adminDetailsDto == null || hotelDto == null) {

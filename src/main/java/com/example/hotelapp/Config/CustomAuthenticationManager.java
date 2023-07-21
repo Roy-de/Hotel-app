@@ -29,7 +29,6 @@ public class CustomAuthenticationManager extends ProviderManager {
         String requestUri = request.getRequestURI();
         log.info("Started authentication");
         DaoAuthenticationProvider provider = determineUserDetailsService(requestUri);
-        log.info("User: {}",authentication.getCredentials());
         return provider.authenticate(authentication);
     }
 
