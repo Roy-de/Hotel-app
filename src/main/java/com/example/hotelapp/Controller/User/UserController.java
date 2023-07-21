@@ -1,5 +1,8 @@
 package com.example.hotelapp.Controller.User;
 
+import com.example.hotelapp.Config.JwtAuthFilter;
+import com.example.hotelapp.DTO.Booking.BookingDto;
+import com.example.hotelapp.DTO.Comments.CommentDto;
 import com.example.hotelapp.DTO.User.UserDetailsDto;
 import com.example.hotelapp.DTO.User.UserUpdatedDto;
 import com.example.hotelapp.Service.UserService.UserServiceLayer;
@@ -12,21 +15,22 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
-@CrossOrigin(origins = {"*"},allowedHeaders = {"*"},methods = {RequestMethod.DELETE,RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT},originPatterns = {"*"})
 public class UserController {
 
     private final UserServiceLayer userServiceLayer;
+    private final JwtAuthFilter authFilter;
     @Autowired
-    public UserController(UserServiceLayer userServiceLayer) {
+    public UserController(UserServiceLayer userServiceLayer, JwtAuthFilter authFilter) {
         this.userServiceLayer = userServiceLayer;
+        this.authFilter = authFilter;
     }
     //Post mapping to post user details when creating an account
 
-    @GetMapping("/get_details/{credentials}")
-    public ResponseEntity<?> get_user(@PathVariable String credentials, HttpSession session){
+    @GetMapping("/get_details")
+    public ResponseEntity<?> get_user(HttpSession session){
         //Gets user details and returns them
         try{
-            UserDetailsDto userDetailsDto= userServiceLayer.get_user(credentials);
+            UserDetailsDto userDetailsDto= userServiceLayer.get_user(authFilter.getUsername());
             session.setAttribute("user_details",userDetailsDto);
             return  ResponseEntity.status(HttpStatus.OK).body(userDetailsDto);
         }catch (DataAccessException e){
@@ -46,8 +50,25 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error:" + e);
         }
     }
-    @GetMapping("/hello")
-    public String hello(){
-        return "This is user secured endpoint";
+    //Comment
+    @PostMapping("/comment")
+    public ResponseEntity<?> create_comment(@RequestBody CommentDto commentDto){
+        //create comment
+        try{
+            userServiceLayer.create_comment(commentDto,authFilter.getUsername());
+            return ResponseEntity.ok("Success");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: "+e.getMessage());
+        }
+    }
+    //Booking
+    @PostMapping("/booking")
+    public ResponseEntity<?> create_booking(@RequestBody BookingDto bookingDto){
+        try{
+            userServiceLayer.create_booking(bookingDto,authFilter.getUsername());
+            return ResponseEntity.ok("Success");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: "+e.getMessage());
+        }
     }
 }

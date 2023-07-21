@@ -2,6 +2,8 @@ package com.example.hotelapp.Service.UserService;
 
 import com.example.hotelapp.Config.CustomAuthenticationManager;
 import com.example.hotelapp.Controller.Login.ResponseDto;
+import com.example.hotelapp.DTO.Booking.BookingDto;
+import com.example.hotelapp.DTO.Comments.CommentDto;
 import com.example.hotelapp.DTO.User.UserDetailsDto;
 import com.example.hotelapp.DTO.User.UserDto;
 import com.example.hotelapp.DTO.User.UserUpdatedDto;
@@ -71,5 +73,19 @@ public class UserServiceLayer {
         //Get user credentials
         userRepository.update_user(userUpdatedDto,credentials);
 
+    }
+    public void create_comment(CommentDto commentDto,String username){
+        try{
+            userRepository.create_comment(commentDto,username);
+        }catch (Exception e){
+            log.info("Error: {}",e.getMessage());
+        }
+    }
+    public void create_booking(BookingDto bookingDto,String username){
+        try{
+            userRepository.create_booking(bookingDto,username);
+        }catch (Exception e){
+            log.info("Error: {}",e.getMessage());
+        }
     }
 }

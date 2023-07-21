@@ -14,8 +14,7 @@ import java.util.Date;
 public class CommentDto {
     private String username;
     private String rating;
-    private String hotel_name;
     private String comment;
-    private int user_id;
+    private int hotel_id;
     private Date created_at;
 }

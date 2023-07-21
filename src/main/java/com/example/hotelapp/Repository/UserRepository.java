@@ -1,6 +1,8 @@
 package com.example.hotelapp.Repository;
 
+import com.example.hotelapp.DTO.Booking.BookingDto;
 import com.example.hotelapp.DTO.ChangedPassword;
+import com.example.hotelapp.DTO.Comments.CommentDto;
 import com.example.hotelapp.DTO.User.UserDetailsDto;
 import com.example.hotelapp.DTO.User.UserDto;
 import com.example.hotelapp.DTO.User.UserUpdatedDto;
@@ -11,7 +13,7 @@ public interface UserRepository {
     //Method to create a user account
     void create_user_account(UserDto userDto);
     //Method to get user credentials.User should not see this
-    /**Method to update user details
+    /*Method to update user details
      The user should be able to change password and other details
     *---------------HOW IT WORKS------------------
     1. Get user details and store them in the User details dto
@@ -20,6 +22,8 @@ public interface UserRepository {
     4. Update the details of the user. Do this by updating user record and use the email in
     the where clause
      */
+    void create_comment(CommentDto commentDto,String username);
+    void create_booking(BookingDto bookingDto,String username);
     UserDetailsDto get_user(String credentials);
     void update_user(UserUpdatedDto userUpdatedDto, String credentials);
     ChangedPassword change_password(UserDetailsDto userDetailsDto);

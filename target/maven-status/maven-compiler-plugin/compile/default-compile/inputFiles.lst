@@ -1,7 +1,9 @@
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Mappers/userRowMapper.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/DTO/ChangedPassword.java
+/home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Service/ConvertEmailToUsername.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/ExceptionHandlers/Exception/UsernameAlreadyTakenException.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/ExceptionHandlers/Exception/UserNotFoundException.java
+/home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Service/Jwt/JwtService.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/DTO/Admin/AdminCredential.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/ExceptionHandlers/Response/DatabaseResponse.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/DTO/Hotel/HotelObject.java
@@ -14,7 +16,6 @@
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Service/BookingService/BookingServiceLayer.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/DTO/Hotel/HotelDto.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Mappers/UserDetailsMapper.java
-/home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Mappers/AdminCredentialsMapper.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Controller/Login/LoginController.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Security/SecurityConfig.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Mappers/HotelImageMapper.java
@@ -41,6 +42,7 @@
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/DTO/User/UserCredentials.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/DTO/User/UserDetailsDto.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/DTO/Admin/AdminDetailsDto.java
+/home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Config/CustomAuthenticationManager.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/DTO/Hotel/HotelServicesDto.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Controller/Admin/AdminController.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Repository/impl/HotelRepositoryImpl.java
@@ -48,8 +50,12 @@
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Service/AdminService/AdminServiceLayer.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Repository/impl/UserRepositoryImpl.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Mappers/HotelRowMapper.java
+/home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Mappers/CredentialsMapper.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/ExceptionHandlers/DatabaseExceptionHandler.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Repository/impl/BookingRepositoryImpl.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Repository/UserRepository.java
+/home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Security/DelegatingUserDetailsService.java
+/home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/Config/JwtAuthFilter.java
+/home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/DTO/CredentialsDto.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/DTO/User/UserUpdatedDto.java
 /home/roy/Documents/AttachmentProject/Hotel-app/src/main/java/com/example/hotelapp/DTO/Comments/CommentDto.java
