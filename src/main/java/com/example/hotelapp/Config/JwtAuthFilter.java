@@ -32,27 +32,30 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         return currentUsername.get();
     }
 
+    /**
+     * Filter for JWT
+     * @param request HttpRequest
+     * @param response  HttpResponse
+     * @param filterChain   Filter chain
+     * @throws ServletException Servlet exception
+     * @throws IOException  IOException
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, @Nonnull HttpServletResponse response,@Nonnull FilterChain filterChain) throws ServletException, IOException {
         String authHeader =  request.getHeader("Authorization");
         String username =null;
         String token = null;
         if(authHeader != null && authHeader.startsWith("Bearer ")){
-            log.info("Getting token");
             token = authHeader.substring(7);
-            log.info("Extracting username from token");
             username = jwtService.extractUsername(token);
-            log.info("Successfully extracted username from token");
         }
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
-            log.info("Loading username from delegating user service plus roles");
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if(jwtService.validateToken(token,userDetails)){
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
                 currentUsername.set(username);
-                log.info("Successfully created and set authentication for user: {}",userDetails.getUsername());
             }
         }
         filterChain.doFilter(request,response);

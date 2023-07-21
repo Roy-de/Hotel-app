@@ -6,7 +6,6 @@ import com.example.hotelapp.DTO.User.UserDetailsDto;
 import com.example.hotelapp.DTO.User.UserDto;
 import com.example.hotelapp.DTO.User.UserUpdatedDto;
 import com.example.hotelapp.Repository.impl.UserRepositoryImpl;
-import com.example.hotelapp.Service.ConvertEmailToUsername;
 import com.example.hotelapp.Service.Jwt.JwtService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -29,13 +28,11 @@ public class UserServiceLayer {
     private final UserRepositoryImpl userRepository;
     private final CustomAuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private final ConvertEmailToUsername convertEmailToUsername;
 
-    public UserServiceLayer(UserRepositoryImpl userRepository, CustomAuthenticationManager authenticationManager, JwtService jwtService, ConvertEmailToUsername convertEmailToUsername) {
+    public UserServiceLayer(UserRepositoryImpl userRepository, CustomAuthenticationManager authenticationManager, JwtService jwtService) {
         this.userRepository = userRepository;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
-        this.convertEmailToUsername = convertEmailToUsername;
     }
 
     public ResponseDto create_user_account(UserDto user){
@@ -56,18 +53,15 @@ public class UserServiceLayer {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
             );
-            String username = convertEmailToUsername.userEmail(user.getUsername());
-
             responseDto.setStatus(200);
-            responseDto.setMessage(jwtService.generateToken(username));
+            responseDto.setMessage(jwtService.generateToken(user.getUsername()));
             log.info("returned jwt token in response");
             return responseDto;
         }catch (Exception e){
             responseDto.setStatus(500);
             responseDto.setMessage("Error: "+e);
+            return responseDto;
         }
-
-        return responseDto;
     }
 
     public UserDetailsDto get_user(String credentials){

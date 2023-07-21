@@ -48,6 +48,7 @@ public class AdminController {
             String username = authFilter.getUsername();
             log.info("Got username: {}",username);
             List<HotelObject> hotels = adminServiceLayer.get_all_hotels(username);
+            List<HotelImagesDto> images = new ArrayList<>();
             session.setAttribute("admin_username",username);
             return ResponseEntity.ok(hotels);
         } catch (NotFoundException e) {
@@ -57,6 +58,10 @@ public class AdminController {
             // Return 500 Internal Server Error for other generic exceptions
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
+    }
+    @GetMapping("/images")
+    public ResponseEntity<?> get_images(){
+        return null;
     }
 
     /** UPDATE ADMIN DETAILS, HOTEL DETAILS, HOTEL IMAGES, HOTEL SERVICES */
@@ -70,7 +75,7 @@ public class AdminController {
             }
 
 
-            List<HotelImagesDto> hotelImagesDtoList = images(images, descriptions);
+            List<HotelImagesDto> hotelImagesDtoList = hotelServiceLayer.images(images, descriptions);
 
             hotelServiceLayer.insert_image(hotelId, hotelImagesDtoList);
             return ResponseEntity.ok("Success");
@@ -79,20 +84,6 @@ public class AdminController {
         }
     }
 
-    private List<HotelImagesDto> images(@RequestParam("images") List<MultipartFile> images,
-                                        @RequestParam(value = "description", required = false) List<String> descriptions) throws IOException {
-        @SuppressWarnings("Duplicated code fragment (9 lines long)")
-        List<HotelImagesDto> hotelImagesDtoList = new ArrayList<>();
-        for (int i = 0; i < images.size(); i++) {
-            MultipartFile image = images.get(i);
-            String description = (descriptions != null && i < descriptions.size()) ? descriptions.get(i) : null;
-            byte[] imageBytes = image.getBytes();
-
-            HotelImagesDto hotelImagesDto = new HotelImagesDto(imageBytes, description);
-            hotelImagesDtoList.add(hotelImagesDto);
-        }
-        return hotelImagesDtoList;
-    }
     @PutMapping("/update_details")
     public ResponseEntity<?> update_details(@RequestBody AdminDetailsDto adminDetailsDto){
         String username = authFilter.getUsername();

@@ -5,11 +5,11 @@ import com.example.hotelapp.DTO.Admin.AdminDto;
 import com.example.hotelapp.DTO.Hotel.HotelDto;
 import com.example.hotelapp.DTO.Hotel.HotelImagesDto;
 import com.example.hotelapp.DTO.Hotel.HotelObject;
-import com.example.hotelapp.ExceptionHandlers.Exception.DatabaseException;
 import com.example.hotelapp.Mappers.HotelObjectMapper;
 import com.example.hotelapp.Repository.AdminRepository;
 import com.example.hotelapp.Service.HotelService.HotelServiceLayer;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -102,8 +102,8 @@ public class AdminRepositoryImpl implements AdminRepository {
         try{
             jdbcTemplate.update(sql,id);
             return "Successfully deleted hotel";
-        }catch (DatabaseException e){
-            return "Error: "+e;
+        }catch (DataAccessException e){
+            return "Error: "+e.getMessage();
         }
     }
     /**Check if the person who is deleting hotel is the hotel owner*/
@@ -124,9 +124,9 @@ public class AdminRepositoryImpl implements AdminRepository {
             String sql = "UPDATE public.admin_details SET first_name=?,last_name=?,alt_phone_no = ?,phone_no=?,alt_email=? WHERE admin_id IN(SELECT id FROM public.admin_acc WHERE username = ?)";
             jdbcTemplate.update(sql, adminDetailsDto.getFirst_name(), adminDetailsDto.getLast_name(), adminDetailsDto.getAlt_phone_no(), adminDetailsDto.getPhone_no(), adminDetailsDto.getAlt_email(), username);
             return "Success";
-        }catch (DatabaseException e){
+        }catch (DataAccessException e){
 
-            return ("Error:" +e);
+            return ("Error:" +e.getMessage());
         }
     }
 

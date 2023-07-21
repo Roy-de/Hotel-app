@@ -9,6 +9,7 @@ import com.example.hotelapp.DTO.Hotel.HotelImagesDto;
 import com.example.hotelapp.DTO.User.UserDto;
 import com.example.hotelapp.Service.AdminService.AdminServiceLayer;
 import com.example.hotelapp.Service.ConvertEmailToUsername;
+import com.example.hotelapp.Service.HotelService.HotelServiceLayer;
 import com.example.hotelapp.Service.Jwt.JwtService;
 import com.example.hotelapp.Service.UserService.UserServiceLayer;
 import jakarta.servlet.http.HttpSession;
@@ -24,14 +25,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/accounts")
 @Slf4j
 public class LoginController {
+    private final HotelServiceLayer hotelServiceLayer;
     private final ConvertEmailToUsername convertEmailToUsername;
     private final CustomAuthenticationManager authenticationManager;
     /**
@@ -41,7 +42,8 @@ public class LoginController {
     private final AdminServiceLayer adminServiceLayer;
     private final JwtService jwtService;
     @Autowired
-    public LoginController(ConvertEmailToUsername convertEmailToUsername, CustomAuthenticationManager authenticationManager, UserServiceLayer userServiceLayer, AdminServiceLayer adminServiceLayer, JwtService jwtService) {
+    public LoginController(HotelServiceLayer hotelServiceLayer, ConvertEmailToUsername convertEmailToUsername, CustomAuthenticationManager authenticationManager, UserServiceLayer userServiceLayer, AdminServiceLayer adminServiceLayer, JwtService jwtService) {
+        this.hotelServiceLayer = hotelServiceLayer;
         this.convertEmailToUsername = convertEmailToUsername;
         this.authenticationManager = authenticationManager;
         this.userServiceLayer = userServiceLayer;
@@ -49,7 +51,7 @@ public class LoginController {
         this.jwtService = jwtService;
     }
 
-    @PostMapping("/admin")
+    @PostMapping("/login/admin")
     public ResponseEntity<?> admin_login(@RequestBody CredentialsDto credentials) {
        try{
            authenticationManager.authenticate(
@@ -66,7 +68,7 @@ public class LoginController {
            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bad credentials");
        }
     }
-    @PostMapping("/user")
+    @PostMapping("/login/user")
     public ResponseEntity<?>user_login(@RequestBody CredentialsDto credentials){
         try{
             authenticationManager.authenticate(
@@ -91,7 +93,7 @@ public class LoginController {
      * ,email and password into the data transfer object called <code>UserDto</code>
      * @return String "Account created successfully"
      */
-    @PostMapping("/create_user")
+    @PostMapping("/create_user_account")
     public ResponseEntity<?> create_user_account(@RequestBody @Validated UserDto user){
         try{
             ResponseDto responseDto = userServiceLayer.create_user_account(user);
@@ -107,7 +109,7 @@ public class LoginController {
      * @param session   this will just store the data into a session
      * @return  account creates successfully if username and email are not pre-registered
      */
-    @PostMapping("/create_account")
+    @PostMapping("/create_admin_account")
     public ResponseEntity<String> createAccount(@RequestBody AdminDto adminDto, HttpSession session) {
         // Get user details then check if the two objects exist
         String validityMessage = adminServiceLayer.check_admin_details_validity(adminDto);
@@ -161,17 +163,10 @@ public class LoginController {
     @PostMapping("/host")
     public ResponseEntity<String> host(
             @RequestParam(value = "images", required = false) List<MultipartFile> images,
-            @RequestParam(value = "descriptions", required = false) List<String> descriptions,
-            @RequestParam String name,
-            @RequestParam String location,
-            @RequestParam String description,
-            @RequestParam double pricing,
-            @RequestParam int no_of_beds,
-            @RequestParam int rooms_available,
-            @RequestParam double longitude,
-            @RequestParam double latitude,
-            @RequestParam String place,
-            HttpSession session) {
+            @RequestParam(value = "descriptions", required = false) List<String> descriptions, @RequestParam String name,
+            @RequestParam String location, @RequestParam String description, @RequestParam double pricing,
+            @RequestParam int no_of_beds, @RequestParam int rooms_available, @RequestParam double longitude,
+            @RequestParam double latitude, @RequestParam String place, HttpSession session) {
         AdminDto adminDto = (AdminDto) session.getAttribute("adminDto");
         AdminDetailsDto adminDetailsDto = (AdminDetailsDto) session.getAttribute("adminDetailsDto");
         if (adminDto == null || adminDetailsDto == null) {
@@ -193,7 +188,7 @@ public class LoginController {
             List<HotelImagesDto> hotelImagesDtoList = new ArrayList<>();
 
             if (images != null && descriptions != null && images.size() == descriptions.size()) {
-                hotelImagesDtoList = images(images, descriptions);
+                hotelImagesDtoList = hotelServiceLayer.images(images, descriptions);
             } else {
                 // Handle the case where images and descriptions are null or have different sizes
                 HotelImagesDto placeholderDto = new HotelImagesDto();
@@ -229,25 +224,11 @@ public class LoginController {
         }
 
         try {
-            adminServiceLayer.create_account_and_hotel(adminDto, adminDetailsDto, hotelDto,hotelImagesDtoList);
+            ResponseDto response = adminServiceLayer.create_account_and_hotel(adminDto, adminDetailsDto, hotelDto,hotelImagesDtoList);
             session.invalidate();
-            return ResponseEntity.status(HttpStatus.OK).body("Account created successfully");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error encountered: " + e.getMessage());
         }
-    }
-    private List<HotelImagesDto> images(@RequestParam("images") List<MultipartFile> images,
-                                        @RequestParam(value = "description", required = false) List<String> descriptions) throws IOException {
-        List<HotelImagesDto> hotelImagesDtoList = new ArrayList<>();
-
-        for (int i = 0; i < images.size(); i++) {
-            MultipartFile image = images.get(i);
-            String description = (descriptions != null && i < descriptions.size()) ? descriptions.get(i) : null;
-            byte[] imageBytes = image.getBytes();
-
-            HotelImagesDto hotelImagesDto = new HotelImagesDto(imageBytes, description);
-            hotelImagesDtoList.add(hotelImagesDto);
-        }
-        return hotelImagesDtoList;
     }
 }

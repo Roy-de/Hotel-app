@@ -1,12 +1,17 @@
 package com.example.hotelapp.Service.AdminService;
 
+import com.example.hotelapp.Config.CustomAuthenticationManager;
+import com.example.hotelapp.Controller.Login.ResponseDto;
 import com.example.hotelapp.DTO.Admin.AdminDetailsDto;
 import com.example.hotelapp.DTO.Admin.AdminDto;
 import com.example.hotelapp.DTO.Hotel.HotelDto;
 import com.example.hotelapp.DTO.Hotel.HotelImagesDto;
 import com.example.hotelapp.DTO.Hotel.HotelObject;
 import com.example.hotelapp.Repository.impl.AdminRepositoryImpl;
+import com.example.hotelapp.Service.Jwt.JwtService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,9 +20,13 @@ import java.util.List;
 @Slf4j
 public class AdminServiceLayer {
     private final AdminRepositoryImpl adminRepository;
+    private final CustomAuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
-    public AdminServiceLayer(AdminRepositoryImpl adminRepository) {
+    public AdminServiceLayer(AdminRepositoryImpl adminRepository, CustomAuthenticationManager authenticationManager, JwtService jwtService) {
         this.adminRepository = adminRepository;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
     /**
@@ -42,9 +51,32 @@ public class AdminServiceLayer {
             return "proceed to create account";
     }
 
-    public void create_account_and_hotel(AdminDto adminDto, AdminDetailsDto adminDetailsDto, HotelDto hotelDto, List<HotelImagesDto> hotelImagesDtoList){
+    public ResponseDto create_account_and_hotel(AdminDto adminDto, AdminDetailsDto adminDetailsDto, HotelDto hotelDto, List<HotelImagesDto> hotelImagesDtoList){
         //Create account now
-        adminRepository.create_account(adminDto,adminDetailsDto,hotelDto,hotelImagesDtoList);
+        ResponseDto responseDto = new ResponseDto();
+       try{
+           try{
+               log.info("Trying to create account");
+               adminRepository.create_account(adminDto,adminDetailsDto,hotelDto,hotelImagesDtoList);
+               log.info("Successfully created account");
+           }catch (DataAccessException e){
+               log.info("Error: {}",e.getMessage());
+               responseDto.setStatus(500);
+               responseDto.setMessage(e.getMessage());
+               return responseDto;
+           }
+           authenticationManager.authenticate(
+                   new UsernamePasswordAuthenticationToken(adminDto.getUsername(),adminDto.getPassword())
+           );
+           responseDto.setStatus(200);
+           responseDto.setMessage(jwtService.generateToken(adminDto.getUsername()));
+           log.info("Returned jwt token");
+           return responseDto;
+       }catch (Exception e){
+           responseDto.setStatus(500);
+           responseDto.setMessage("Error: "+e.getMessage());
+           return responseDto;
+       }
     }
     public List<HotelObject> get_all_hotels(String username){
         return adminRepository.get_all_hotels(username);

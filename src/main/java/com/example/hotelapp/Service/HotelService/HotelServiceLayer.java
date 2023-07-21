@@ -8,7 +8,10 @@ import com.example.hotelapp.Repository.impl.HotelRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,12 +24,6 @@ public class HotelServiceLayer {
         this.hotelRepository = hotelRepository;
     }
 
-    /*--------HOW IT SHOULD WORK----------
-        1. List hotels
-        * */
-/*    public List<HotelDto> list_hotels(){
-        return
-    }*/
     public List<HotelObject> list_all_hotels(String location){
         return hotelRepository.list_all_hotels(location.toLowerCase());
     }
@@ -69,6 +66,20 @@ public class HotelServiceLayer {
             return e.getMessage();
         }
 
+    }
+    public List<HotelImagesDto> images(@RequestParam("images") List<MultipartFile> images,
+                                       @RequestParam(value = "description", required = false) List<String> descriptions) throws IOException {
+        @SuppressWarnings("Duplicated code fragment (9 lines long)")
+        List<HotelImagesDto> hotelImagesDtoList = new ArrayList<>();
+        for (int i = 0; i < images.size(); i++) {
+            MultipartFile image = images.get(i);
+            String description = (descriptions != null && i < descriptions.size()) ? descriptions.get(i) : null;
+            byte[] imageBytes = image.getBytes();
+
+            HotelImagesDto hotelImagesDto = new HotelImagesDto(imageBytes, description);
+            hotelImagesDtoList.add(hotelImagesDto);
+        }
+        return hotelImagesDtoList;
     }
     public void delete_image(List<Integer> ids){
         hotelRepository.delete_image(ids);
