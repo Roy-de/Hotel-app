@@ -258,14 +258,12 @@ public class LoginController {
      */
     @SneakyThrows
     @PostMapping("/admin/final_step")
-    @SuppressWarnings("Unchecked cast: 'java.lang.Object' to 'java.util.List<com.example.hotelapp.DTO.Hotel.HotelImagesDto>'")
     public ResponseEntity<ResponseDto> finalStep(HttpSession session) {
         ResponseDto responseDto = new ResponseDto();
-
         AdminDto adminDto = (AdminDto) session.getAttribute("adminDto");
         AdminDetailsDto adminDetailsDto = (AdminDetailsDto) session.getAttribute("adminDetailsDto");
         HotelDto hotelDto = (HotelDto) session.getAttribute("hotelDto");
-
+        @SuppressWarnings("Unchecked cast: 'java.lang.Object' to 'java.util.List<com.example.hotelapp.DTO.Hotel.HotelImagesDto>'")
         List<HotelImagesDto> hotelImagesDtoList = (List<HotelImagesDto>) session.getAttribute("hotelImages");
 
         if (adminDto == null || adminDetailsDto == null || hotelDto == null) {
