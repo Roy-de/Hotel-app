@@ -2,6 +2,7 @@ package com.example.hotelapp.Controller.MainController;
 
 import com.example.hotelapp.DTO.Hotel.HotelObject;
 import com.example.hotelapp.Service.HotelService.HotelServiceLayer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/hotels/listing")
+@Slf4j
 public class hotelController {
     private final HotelServiceLayer hotelServiceLayer;
 

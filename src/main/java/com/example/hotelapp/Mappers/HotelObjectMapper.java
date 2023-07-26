@@ -21,13 +21,14 @@ import java.util.Objects;
  */
 @Slf4j
 public class HotelObjectMapper {
+    private static final String IMAGE_QUERY = "SELECT * FROM public.hotel_images WHERE hotel_id = ?";
+    private static final String SERVICE_QUERY = "SELECT hotel_id, views, entertainment, parking, washing_machine, swimming, wifi, bar, breakfast, fitness_centre, restaurant, room_services FROM hotel_services WHERE hotel_id = ?";
 
     private final JdbcTemplate jdbcTemplate;
 
     public HotelObjectMapper(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-
     /**
      * This is the first method that is used to get the data based on the location queried
      * @param sql   Takes in the sql query
@@ -36,6 +37,9 @@ public class HotelObjectMapper {
      */
     public List<HotelObject> get_hotel_details_by_location(String sql, String parameter) {
         List<HotelDto> hotelDtos = jdbcTemplate.query(sql, new HotelRowMapper(), parameter);
+        for(HotelDto hotelDto: hotelDtos){
+            log.info("Hotel id: {}",hotelDto.getId());
+        }
         return createHotelObjects(hotelDtos);
     }
     /**
@@ -77,8 +81,10 @@ public class HotelObjectMapper {
             hotelObject.setHotelDto(hotelDto);
 
             int hotelId = hotelObject.getHotelDto().getId();
+            log.info("Hotel id -> {}",hotelId);
             List<HotelImagesDto> images = get_hotel_images(hotelId);
             if(!Objects.requireNonNull(images).isEmpty()){
+                log.info("Image -> {}",images.size());
                 hotelObject.setHotelImagesDto(images);
             }else{
                 hotelObject.setHotelImagesDto(null);
@@ -88,6 +94,7 @@ public class HotelObjectMapper {
 
             hotelObjects.add(hotelObject);
         }
+        log.info("Created hotel object: {}", (long) hotelObjects.size());
         return hotelObjects;
     }
 
@@ -97,11 +104,8 @@ public class HotelObjectMapper {
      * @return  hotel images (list)
      */
     private List<HotelImagesDto> get_hotel_images(int hotelId) {
-        String imagesQuery = "SELECT id, image, description, hotel_id " +
-                "FROM public.hotel_images " +
-                "WHERE hotel_id = ?";
         try{
-            return jdbcTemplate.query(imagesQuery, new HotelImageMapper(), hotelId);
+            return jdbcTemplate.query(IMAGE_QUERY, new HotelImageMapper(), hotelId);
         }catch (EmptyResultDataAccessException e){
             log.info("Empty result: {}",e.getMessage());
             return null;
@@ -114,12 +118,8 @@ public class HotelObjectMapper {
      * @return  services dto
      */
     private HotelServicesDto getHotelServicesByHotelId(int hotelId) {
-        String servicesQuery = "SELECT hotel_id, views, entertainment, parking, washing_machine, " +
-                "swimming, wifi, bar, breakfast, fitness_centre, restaurant, room_services " +
-                "FROM hotel_services " +
-                "WHERE hotel_id = ?";
         try {
-            return jdbcTemplate.queryForObject(servicesQuery, new HotelServiceMapper(), hotelId);
+            return jdbcTemplate.queryForObject(SERVICE_QUERY, new HotelServiceMapper(), hotelId);
         } catch (EmptyResultDataAccessException e) {
             return null;
         }

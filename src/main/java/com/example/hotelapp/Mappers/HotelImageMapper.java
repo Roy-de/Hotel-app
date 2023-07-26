@@ -10,10 +10,11 @@ public class HotelImageMapper implements RowMapper<HotelImagesDto> {
     @Override
     public HotelImagesDto mapRow(ResultSet rs, int rowNum) throws SQLException {
         HotelImagesDto hotelImagesDto = new HotelImagesDto();
-        hotelImagesDto.setId(rs.getInt(1));
-        hotelImagesDto.setImage(rs.getBytes(2));
-        hotelImagesDto.setHotel_id(rs.getInt(4));
-        hotelImagesDto.setDescription(rs.getString(3));
+        hotelImagesDto.setId(rs.getInt("id"));
+        hotelImagesDto.setImageUrl(rs.getString("imageurl"));
+        hotelImagesDto.setHotel_id(rs.getInt("hotel_id"));
+        hotelImagesDto.setDescription(rs.getString("description"));
+        hotelImagesDto.setPublic_id(rs.getString("public_id"));
         return hotelImagesDto;
     }
 }

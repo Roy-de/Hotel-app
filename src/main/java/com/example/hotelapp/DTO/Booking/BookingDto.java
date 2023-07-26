@@ -6,7 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.text.DateFormat;
+import java.sql.Time;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -14,12 +15,13 @@ import java.text.DateFormat;
 @AllArgsConstructor
 public class BookingDto {
     @DateTimeFormat
-    private DateFormat checkin;
+    private Date checkin;
     @DateTimeFormat
-    private DateFormat checkout;
+    private Date checkout;
     private int rooms;
     private int adults;
     private int children;
-    private DateFormat order_time;
+    private Time order_time;
+    private String username;
     private int hotel_id;
 }

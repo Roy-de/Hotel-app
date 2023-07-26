@@ -18,7 +18,9 @@ import java.util.function.Function;
 @Component
 @Slf4j
 public class JwtService {
-    private static final String SECRET_KEY ="b65005aac265181a0a2a7759366f1cceac6c584adc21dff12470a2623cbcc123";
+    private static final String SECRET_KEY = "b65005aac265181a0a2a7759366f1cceac6c584adc21dff12470a2623cbcc123";
+    private static final Date ACCESS_TOKEN = new Date(System.currentTimeMillis()+1000*60*30);
+    private static final Date REFRESH_TOKEN = new Date(System.currentTimeMillis()+1000*60*60*24);
     //Method to create token
     public String extractUsername(String token){
     return extractClaim(token, Claims::getSubject);
@@ -67,10 +69,16 @@ public class JwtService {
                 .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+1000*60*30))
+                .setExpiration(ACCESS_TOKEN)
                 .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
     }
-
+    private String refreshToken(String username){
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(REFRESH_TOKEN)
+                .signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
+    }
     private Key getSignKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);

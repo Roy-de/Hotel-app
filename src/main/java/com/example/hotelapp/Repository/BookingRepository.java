@@ -8,9 +8,9 @@ import java.util.List;
 @Repository
 public interface BookingRepository {
     //Create new booking
-    void create_booking(BookingDto bookingDto);
+    void create_booking(BookingDto bookingDto,int id);
     //See booking
-    List<BookingDto> list_booking(BookingDto bookingDto);
+    List<BookingDto> list_booking(int id);
     //Delete Booking
-    void delete_booking(BookingDto bookingDto);
+    void delete_booking(int id);
 }

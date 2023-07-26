@@ -194,7 +194,7 @@ public class AdminController {
 
                 // Create a new HotelImagesDto object and add it to the list
                 HotelImagesDto hotelImageDto = new HotelImagesDto();
-                hotelImageDto.setImage(image.getBytes()); // Assuming the HotelImagesDto has a property 'image' to store the image bytes
+                //hotelImageDto.setImage(image.getBytes()); // Assuming the HotelImagesDto has a property 'image' to store the image bytes
                 hotelImageDto.setDescription(description); // Assuming the HotelImagesDto has a property 'description' to store the description
                 hotelImagesDtoList.add(hotelImageDto);
             }

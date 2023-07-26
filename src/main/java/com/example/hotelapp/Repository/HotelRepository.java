@@ -14,7 +14,7 @@ public interface HotelRepository {
     //Create hotel
     int create_hotel(int admin_id,HotelDto hotelDto,HotelServicesDto hotelServicesDto);
     //----------INSERT IMAGES -------------
-    void insert_images(List<byte[]> images, List<String> descriptions,int Hotel_id);
+    void insert_images(List<String> public_ids,List<String> secure_urls,List<String> descriptions,int Hotel_id);
     /*
     ---------------- EDIT HOTEL -----------
      */

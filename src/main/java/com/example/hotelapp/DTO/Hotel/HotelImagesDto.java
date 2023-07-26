@@ -11,12 +11,14 @@ import lombok.Setter;
 @NoArgsConstructor
 public class HotelImagesDto {
     private int id;
-    private byte[] image;
+    private String public_id;
+    private String imageUrl;
     private String description;
     private int hotel_id;
 
-    public HotelImagesDto(byte[] image, String description) {
-        this.image = image;
+    public HotelImagesDto(String public_id, String imageUrl, String description) {
+        this.public_id = public_id;
+        this.imageUrl = imageUrl;
         this.description = description;
     }
 }

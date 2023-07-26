@@ -25,7 +25,7 @@ public class CustomAuthenticationManager extends ProviderManager {
 
     public CustomAuthenticationManager(List<AuthenticationProvider> providers, DaoAuthenticationProvider adminProvider, DaoAuthenticationProvider userProvider) {
         super(providers);
-        this.defaultProvider = userProvider; // Set default provider (userProvider in this case)
+        this.defaultProvider = userProvider;
         this.providerMap = new HashMap<>();
         this.providerMap.put("/admin", adminProvider);
         this.providerMap.put("/user", userProvider);
@@ -51,7 +51,6 @@ public class CustomAuthenticationManager extends ProviderManager {
                 return entry.getValue();
             }
         }
-        // Return the default provider if no match is found
         return defaultProvider;
     }
 }

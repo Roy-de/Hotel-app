@@ -5,6 +5,7 @@ import com.example.hotelapp.DTO.Hotel.HotelImagesDto;
 import com.example.hotelapp.DTO.Hotel.HotelObject;
 import com.example.hotelapp.DTO.Hotel.HotelServicesDto;
 import com.example.hotelapp.Repository.impl.HotelRepositoryImpl;
+import com.example.hotelapp.Service.ImageService.ImageServiceLayer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -18,9 +19,11 @@ import java.util.List;
 @Service
 @Slf4j
 public class HotelServiceLayer {
+    private final ImageServiceLayer imageServiceLayer;
     private final HotelRepositoryImpl hotelRepository;
 
-    public HotelServiceLayer(HotelRepositoryImpl hotelRepository) {
+    public HotelServiceLayer(ImageServiceLayer imageServiceLayer, HotelRepositoryImpl hotelRepository) {
+        this.imageServiceLayer = imageServiceLayer;
         this.hotelRepository = hotelRepository;
     }
 
@@ -32,16 +35,21 @@ public class HotelServiceLayer {
         return hotelRepository.get_hotel_by_id(hotel_id);
     }
     public void insert_image(int Hotel_id,List<HotelImagesDto> hotelImagesDtoList){
-        List<byte[]> images = new ArrayList<>();
+        List<String> public_ids = new ArrayList<>();
+        List<String> secure_urls = new ArrayList<>();
         List<String> descriptions = new ArrayList<>();
 
         for(HotelImagesDto hotelImagesDto: hotelImagesDtoList){
-            byte[] imageFile = hotelImagesDto.getImage();
             String description = hotelImagesDto.getDescription();
-            images.add(imageFile);
+            String public_id = hotelImagesDto.getPublic_id();
+            String secure_url = hotelImagesDto.getImageUrl();
+            public_ids.add(public_id);
+            secure_urls.add(secure_url);
             descriptions.add(description);
+            log.info("Secure URL in the service layer: {}",secure_url);
+            log.info("Public ID in the service layer: {}",public_id);
         }
-        hotelRepository.insert_images(images,descriptions,Hotel_id);
+        hotelRepository.insert_images(public_ids,secure_urls,descriptions,Hotel_id);
     }
     public void create_hotel(int admin_id,HotelDto hotelDto,HotelServicesDto hotelServicesDto,List<HotelImagesDto> hotelImagesDtoList){
         //Create the hotel
@@ -69,16 +77,21 @@ public class HotelServiceLayer {
     }
     public List<HotelImagesDto> images(@RequestParam("images") List<MultipartFile> images,
                                        @RequestParam(value = "description", required = false) List<String> descriptions) throws IOException {
-        @SuppressWarnings("Duplicated code fragment (9 lines long)")
         List<HotelImagesDto> hotelImagesDtoList = new ArrayList<>();
+
         for (int i = 0; i < images.size(); i++) {
             MultipartFile image = images.get(i);
-            String description = (descriptions != null && i < descriptions.size()) ? descriptions.get(i) : null;
-            byte[] imageBytes = image.getBytes();
+            HotelImagesDto imagesDto = imageServiceLayer.uploadImage(image);
 
-            HotelImagesDto hotelImagesDto = new HotelImagesDto(imageBytes, description);
-            hotelImagesDtoList.add(hotelImagesDto);
+            // If descriptions are provided, assign the corresponding description to the image
+            if (descriptions != null && i < descriptions.size()) {
+                String description = descriptions.get(i);
+                imagesDto.setDescription(description);
+            }
+
+            hotelImagesDtoList.add(imagesDto);
         }
+
         return hotelImagesDtoList;
     }
     public void delete_image(List<Integer> ids){

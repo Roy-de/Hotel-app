@@ -22,6 +22,15 @@ public class AdminRepositoryImpl implements AdminRepository {
     /**
      * In this class, we will perform all admin repository functions
      */
+    //All SQL QUERIES
+    private static final String CREATE_ACCOUNT = "SELECT public.create_admin_and_hotel(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String SEARCH_USERNAME = "SELECT * FROM public.check_admin_credentials(?)";
+    //language=PostgreSQL
+    private static final String GET_HOTELS = "SELECT * FROM public.get_hotels_by_location_or_admin_or_id(NULL,?,NULL)";
+    private static final String DELETE_HOTEL = "DELETE FROM public.hotel WHERE id = ?";
+    private static final String CHECK_OWNER = "SELECT username FROM  public.admin_acc WHERE id IN(SELECT admin_id FROM public.hotel WHERE admin_id = ?)";
+    private static final String EDIT_HOTEL = "UPDATE public.admin_details SET first_name=?,last_name=?,alt_phone_no = ?,phone_no=?,alt_email=? WHERE admin_id IN(SELECT id FROM public.admin_acc WHERE username = ?)";
+    private static final String GET_ADMIN_ID = "SELECT id FROM public.admin_acc WHERE  username = ?";
     private final HotelServiceLayer hotelServiceLayer;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final JdbcTemplate jdbcTemplate;
@@ -40,7 +49,6 @@ public class AdminRepositoryImpl implements AdminRepository {
      */
     @Override
     public void create_account(AdminDto adminDto, AdminDetailsDto adminDetailsDto, HotelDto hotelDto, List<HotelImagesDto> hotelImagesDtoList) {
-        String sql = "SELECT public.create_admin_and_hotel(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         Object[] params = {
                 adminDto.getUsername(),
                 adminDto.getEmail(),
@@ -60,7 +68,7 @@ public class AdminRepositoryImpl implements AdminRepository {
                 adminDetailsDto.getAlt_phone_no(),
                 adminDetailsDto.getAlt_email()
         };
-        List<Integer> result = jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt(1), params);
+        List<Integer> result = jdbcTemplate.query(CREATE_ACCOUNT, (rs, rowNum) -> rs.getInt(1), params);
         int hotel_id = result.isEmpty() ? 0 : result.get(0);
 
         if (hotel_id != 0) {
@@ -75,8 +83,7 @@ public class AdminRepositoryImpl implements AdminRepository {
      */
     @Override
     public boolean search_for_username(String credentials) {
-        String sql = "SELECT * FROM public.check_admin_credentials(?)";
-        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, Boolean.class,credentials));
+        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(SEARCH_USERNAME, Boolean.class,credentials));
     }
 
     /**Gets list of hotels for a specific admin ( i.e. Person who hosted the hotel)
@@ -87,8 +94,7 @@ public class AdminRepositoryImpl implements AdminRepository {
     @Override
     public List<HotelObject> get_all_hotels(String username) {
         HotelObjectMapper hotelObjectMapper = new HotelObjectMapper(jdbcTemplate);
-        String hotelSql = "SELECT * FROM public.get_hotels_by_location_or_admin_or_id(NULL,?,NULL)";
-        return hotelObjectMapper.get_hotel_details_by_username(hotelSql, username);
+        return hotelObjectMapper.get_hotel_details_by_username(GET_HOTELS, username);
     }
 
     /**
@@ -98,9 +104,8 @@ public class AdminRepositoryImpl implements AdminRepository {
      */
     @Override
     public String delete_hotel(int id) {
-        String sql = "DELETE FROM public.hotel WHERE id = ?";
         try{
-            jdbcTemplate.update(sql,id);
+            jdbcTemplate.update(DELETE_HOTEL,id);
             return "Successfully deleted hotel";
         }catch (DataAccessException e){
             return "Error: "+e.getMessage();
@@ -108,8 +113,7 @@ public class AdminRepositoryImpl implements AdminRepository {
     }
     /**Check if the person who is deleting hotel is the hotel owner*/
     public String check_owner(int id){
-        String sql = "SELECT username FROM  public.admin_acc WHERE id IN(SELECT admin_id FROM public.hotel WHERE admin_id = ?)";
-        return jdbcTemplate.queryForObject(sql,String.class,id);
+        return jdbcTemplate.queryForObject(CHECK_OWNER,String.class,id);
     }
 
     /** Edit admin details
@@ -121,8 +125,7 @@ public class AdminRepositoryImpl implements AdminRepository {
     @Override
     public String edit_Details(AdminDetailsDto adminDetailsDto,String username) {
         try{
-            String sql = "UPDATE public.admin_details SET first_name=?,last_name=?,alt_phone_no = ?,phone_no=?,alt_email=? WHERE admin_id IN(SELECT id FROM public.admin_acc WHERE username = ?)";
-            jdbcTemplate.update(sql, adminDetailsDto.getFirst_name(), adminDetailsDto.getLast_name(), adminDetailsDto.getAlt_phone_no(), adminDetailsDto.getPhone_no(), adminDetailsDto.getAlt_email(), username);
+            jdbcTemplate.update(EDIT_HOTEL, adminDetailsDto.getFirst_name(), adminDetailsDto.getLast_name(), adminDetailsDto.getAlt_phone_no(), adminDetailsDto.getPhone_no(), adminDetailsDto.getAlt_email(), username);
             return "Success";
         }catch (DataAccessException e){
 
@@ -137,9 +140,7 @@ public class AdminRepositoryImpl implements AdminRepository {
      */
     @Override
     public Integer get_admin_id(String username) {
-        //language=PostgreSQL
-        String sql = "SELECT id FROM public.admin_acc WHERE  username = ?";
-        return jdbcTemplate.queryForObject(sql, Integer.class, username);
+        return jdbcTemplate.queryForObject(GET_ADMIN_ID, Integer.class, username);
     }
 
 }

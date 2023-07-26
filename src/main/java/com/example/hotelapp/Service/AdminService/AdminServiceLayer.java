@@ -10,7 +10,6 @@ import com.example.hotelapp.DTO.Hotel.HotelObject;
 import com.example.hotelapp.Repository.impl.AdminRepositoryImpl;
 import com.example.hotelapp.Service.Jwt.JwtService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
@@ -59,7 +58,7 @@ public class AdminServiceLayer {
                log.info("Trying to create account");
                adminRepository.create_account(adminDto,adminDetailsDto,hotelDto,hotelImagesDtoList);
                log.info("Successfully created account");
-           }catch (DataAccessException e){
+           }catch (Exception e){
                log.info("Error: {}",e.getMessage());
                responseDto.setStatus(500);
                responseDto.setMessage(e.getMessage());

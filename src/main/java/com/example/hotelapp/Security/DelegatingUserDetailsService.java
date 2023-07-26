@@ -34,6 +34,7 @@ public class DelegatingUserDetailsService implements UserDetailsService {
             log.info("Using admin service in delegating user service");
             return adminService.loadUserByUsername(username);
         } else {
+            log.info("Using user service in delegating user service");
             return userService.loadUserByUsername(username);
         }
     }

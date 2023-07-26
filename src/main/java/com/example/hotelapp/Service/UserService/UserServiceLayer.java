@@ -10,7 +10,7 @@ import com.example.hotelapp.DTO.User.UserUpdatedDto;
 import com.example.hotelapp.Repository.impl.UserRepositoryImpl;
 import com.example.hotelapp.Service.Jwt.JwtService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +45,7 @@ public class UserServiceLayer {
                 userRepository.create_user_account(user);
                 log.info("Created User successfully");
               //  mailSender.sendEmail(user.getEmail(),"Welcome to Savvy Sleeps","Welcome"+ user.getName());
-            }catch (DataAccessException e){
+            }catch (DuplicateKeyException e){
                 responseDto.setStatus(500);
                 responseDto.setMessage("Error: "+e);
                 return responseDto;

@@ -54,11 +54,11 @@ public class SecurityConfig{
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable).
                 authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
-                        .requestMatchers("/user/**").hasAnyAuthority("USER")
-                        .requestMatchers("/login/**").permitAll()
-                        .requestMatchers("/hotel/**").permitAll()
-                        .anyRequest().authenticated())
+                       // .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
+                      //  .requestMatchers("/user/**").hasAnyAuthority("USER")
+                        //.requestMatchers("/accounts/**").permitAll()
+                        //.requestMatchers("/hotels/**").permitAll()
+                        .anyRequest().permitAll())
                 .sessionManagement((session)->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationManager(authenticationManager())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
