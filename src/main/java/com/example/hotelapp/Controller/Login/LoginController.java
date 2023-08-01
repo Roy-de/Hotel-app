@@ -13,7 +13,6 @@ import com.example.hotelapp.Service.ImageService.ImageServiceLayer;
 import com.example.hotelapp.Service.Jwt.JwtService;
 import com.example.hotelapp.Service.UserService.UserServiceLayer;
 import jakarta.servlet.http.HttpSession;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -256,7 +255,6 @@ public class LoginController {
      * @param session gets all other sessions and create the hotel account plus the administrator
      * @return  <code>String</code> - account created successfully
      */
-    @SneakyThrows
     @PostMapping("/admin/final_step")
     public ResponseEntity<ResponseDto> finalStep(HttpSession session) {
         ResponseDto responseDto = new ResponseDto();

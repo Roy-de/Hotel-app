@@ -25,7 +25,7 @@ public class UserRepositoryImpl implements UserRepository{
     private static final String UPDATE_USER = "UPDATE public.user_details SET first_name = ?,last_name = ?,phone_no = ? where username = ? or email = ?";
     private static final String DELETE_USER = "DELETE FROM public.user_account WHERE email = ?";
     private final JdbcTemplate jdbcTemplate;
-    private final PasswordEncoder passwordEncoder =  new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder =  new BCryptPasswordEncoder(10);
 
     public UserRepositoryImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
